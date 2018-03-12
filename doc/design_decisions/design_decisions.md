@@ -1,0 +1,49 @@
+% Registration ICYfication
+% Design Decisions - Issue 0.1, Draft
+% \today{}
+\newpage{}
+
+# Design decisions
+
+## Overview
+
+I plan to work using the V-model from Software Engineering, developing using
+Boehm's spiral.
+
+My approach for user acceptance testing is to run through the User Stories (see
+document entitled 'User Stories') and verify that I can carry-out each story
+and get the expected result.
+
+My approach for implementation (code) will be to use Test-First Development
+(TFD), writing a test, running the code (showing that the test fails because
+there is no code yet), and then writing the code to make the test pass.
+
+## Implementation details
+
+For the first release, I feel most comfortable writing the registration
+application in Flask, with SQLAlchemy backend, running on Google App Engine. I
+used this to make the Bath registration, and I can borrow heavily from this.
+
+Once the first release is done, I can have people test it, and learn from it's
+use. These lessons can inform the design of the second release.
+
+I plan to write the second release mayyyyybe in Go, running on Google App Engine
+
+Advantages of writing application in Go:
+
+1. Go is fast (better than Python)
+2. Strongly-typed, with lots of nice compile-time checks (better than Python)
+3. Nice built-in testing framework
+4. Extensive documentation about app development on Google App Engine exists
+
+Disadvantages:
+
+1. A lot fewer people understand Go than do Python. This is not to be
+   underestimated - I want to be able to hand over the Registration for
+   maintenance, with little-to-no input from myself.
+
+# Change history
+
+Date | Issue | Note
+---|---|---
+2017-03-09 | 0.1, Draft | Initial draft |
