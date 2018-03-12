@@ -7,7 +7,7 @@
 2. On submit, take email address from 'Create Account' user form.
 3. Check with [GoValidator](https://github.com/asaskevich/govalidator) for email address format validity.
 4. Generate a unique email verification code (e.g. 6 random numbers [0-9]
-5. `if` generated code is already marked `InUse`, goto (3), `else` mark as `InUse` and goto (5)
+5. `if` generated code is already marked `InUse`, goto (4), `else` mark as `InUse` and goto (6)
 6. Try to [SendMail()](https://golang.org/pkg/net/smtp/#SendMail) them a unique (hash?) email verification code that expires when session expires.
 7. `if` error from [SendMail()](https://golang.org/pkg/net/smtp/#SendMail), flash error to user and goto (1), else goto (8)
 8. Set an expectation somewhere for that generated verification code
