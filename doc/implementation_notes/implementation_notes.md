@@ -21,6 +21,7 @@ This is Test-First Development, so I'll be writing tests before code.
 
 ## Email verification
 * Looks like I will have to roll my own
+* Should this be a small, self-contained go microservice? It could work with it's own db, or just a db table. It lends itself nicely to a microservice.
 
 1. Present 'Create Account' form to user,
 2. On submit, take email address from 'Create Account' user form,
