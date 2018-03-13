@@ -15,6 +15,10 @@ This is Test-First Development, so I'll be writing tests before code.
 * [Frisby](https://github.com/verdverm/frisby) for application-level testing, i.e. Frisby visits the site, tries to register, pay, etc.
 * [stripe-mock](https://github.com/stripe/stripe-mock) - for testing mock Stripe API without actually hitting the real API.
 
+## Web framework
+
+* [Echo](https://echo.labstack.com/guide)
+
 ## Email verification
 * Looks like I will have to roll my own
 
