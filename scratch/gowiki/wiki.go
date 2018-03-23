@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 // Page is one of the wiki pages. A wiki consists of a series of interconnected
@@ -29,14 +31,20 @@ func (p *Page) save() error {
 // `body`, and returns a pointer to a `Page` literal constructed with the
 // proper title and body values.
 func loadPage(title string) (*Page, error) {
-    filename := title + ".txt"
-    body, _ := ioutil.ReadFile(filename)
-    return &Page{Title: title, Body: body}, nil
+	filename := title + ".txt"
+	body, _ := ioutil.ReadFile(filename)
+	return &Page{Title: title, Body: body}, nil
+}
+
+// viewHandler extracts the page from `r.URL.Path`, loads the page data into
+// HTML, and writes it to `w`, the `http.ResponseWriter`
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[len("/view/"):]
+	p, _ := loadPage(title)
+	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
 }
 
 func main() {
-    p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
-    p1.save()
-    p2, _ := loadPage("TestPage")
-    fmt.Println(string(p2.Body))
+	http.HandleFunc("/view/", viewHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
