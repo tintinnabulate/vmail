@@ -49,12 +49,11 @@ func randToken() string {
 
 func emailCode(recipient, code string) error {
 	// Set up authentication information.
-	//Outgoing server name: mailout.one.com
-	//Port and encryption:
-	//- 587 with STARTTLS (recommended)
-	//- 465 with TLS
-	//- 25 with STARTTLS or none
-	//Authentication: your email address and password
+	// Port and encryption:
+	// - 587 with STARTTLS (recommended)
+	// - 465 with TLS
+	// - 25 with STARTTLS or none
+	// Authentication: your email address and password
 
 	fmt.Println(config.SMTPPassword)
 
