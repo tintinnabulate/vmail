@@ -69,32 +69,32 @@ func makeEmailHeaders(from, to mail.Address, subject string) map[string]string {
 	return headers
 }
 
-func sendEmail(server string, from, to mail.Address, subject, body string) {
-	headers := makeEmailHeaders(from, to, subject)
-
-	// Setup message
+func makeEmailMessage(from, to mail.Address, subject, body string) string {
 	message := ""
-	for k, v := range headers {
+	for k, v := range makeEmailHeaders(from, to, subject) {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
 	}
 	message += "\r\n" + body
+	return message
+}
+
+func sendEmail(server string, from, to mail.Address, subject, body string) {
+	message := makeEmailMessage(from, to, subject, body)
 
 	// Connect to the SMTP Server
-	servername := fmt.Sprintf("%s:465", server)
-
-	host, _, _ := net.SplitHostPort(servername)
-
+	serverName := fmt.Sprintf("%s:465", server)
+	host, _, _ := net.SplitHostPort(serverName)
 	auth := smtp.PlainAuth("", config.SMTPUsername, config.SMTPPassword, config.SMTPServer)
 
 	// TLS config
-	tlsconfig := &tls.Config{
+	tlsConfig := &tls.Config{
 		InsecureSkipVerify: true,
 		ServerName:         host,
 	}
 
 	// For smtp servers running on 465 that require an ssl connection
 	// from the very beginning (no starttls)
-	conn, err := tls.Dial("tcp", servername, tlsconfig)
+	conn, err := tls.Dial("tcp", serverName, tlsConfig)
 	if err != nil {
 		log.Panic(err)
 	}
