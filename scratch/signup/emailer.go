@@ -9,34 +9,49 @@ import (
 	"net/smtp"
 )
 
-func emailCode(recipient, code string) {
-	server := config.SMTPServer
-	from := mail.Address{"", config.SMTPUsername}
-	to := mail.Address{"", recipient}
-	subj := fmt.Sprintf("%s Verification Code", config.SiteName)
-	body := fmt.Sprintf("Code: <a href=\"/verify/%s/%s\">%s</a>", config.SiteDomain, code, code)
-	sendEmail(server, from, to, subj, body)
+type Request struct {
+	from    mail.Address
+	to      mail.Address
+	subject string
+	body    string
 }
 
-func makeEmailHeaders(from, to mail.Address, subject string) map[string]string {
+func newRequest(to, subject, body string) *Request {
+	return &Request{
+		from:    mail.Address{"", config.SMTPUsername},
+		to:      mail.Address{"", to},
+		subject: subject,
+		body:    body,
+	}
+}
+
+func emailCode(recipient, code string) {
+	server := config.SMTPServer
+	subj := fmt.Sprintf("%s Verification Code", config.SiteName)
+	body := fmt.Sprintf("Code: <a href=\"/verify/%s/%s\">%s</a>", config.SiteDomain, code, code)
+	r := newRequest(recipient, subj, body)
+	r.sendEmail(server)
+}
+
+func (r *Request) makeEmailHeaders() map[string]string {
 	headers := make(map[string]string)
-	headers["From"] = from.String()
-	headers["To"] = to.String()
-	headers["Subject"] = subject
+	headers["From"] = r.from.String()
+	headers["To"] = r.to.String()
+	headers["Subject"] = r.subject
 	return headers
 }
 
-func makeEmailMessage(from, to mail.Address, subject, body string) string {
+func (r *Request) makeEmailMessage() string {
 	message := ""
-	for k, v := range makeEmailHeaders(from, to, subject) {
+	for k, v := range r.makeEmailHeaders() {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
 	}
-	message += "\r\n" + body
+	message += "\r\n" + r.body
 	return message
 }
 
-func sendEmail(server string, from, to mail.Address, subject, body string) {
-	message := makeEmailMessage(from, to, subject, body)
+func (r *Request) sendEmail(server string) {
+	message := r.makeEmailMessage()
 
 	// Connect to the SMTP Server
 	serverName := fmt.Sprintf("%s:465", server)
@@ -64,10 +79,10 @@ func sendEmail(server string, from, to mail.Address, subject, body string) {
 		log.Panic(err)
 	}
 	// To && From
-	if err = c.Mail(from.Address); err != nil {
+	if err = c.Mail(r.from.Address); err != nil {
 		log.Panic(err)
 	}
-	if err = c.Rcpt(to.Address); err != nil {
+	if err = c.Rcpt(r.to.Address); err != nil {
 		log.Panic(err)
 	}
 	// Data
