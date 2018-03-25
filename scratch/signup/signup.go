@@ -2,12 +2,15 @@ package main
 
 import (
 	"crypto/rand"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
+	"net/mail"
 	"net/smtp"
 	"os"
 )
@@ -47,27 +50,83 @@ func randToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
-func emailCode(recipient, code string) error {
-	// Set up authentication information.
-	// Port and encryption:
-	// - 587 with STARTTLS (recommended)
-	// - 465 with TLS
-	// - 25 with STARTTLS or none
-	// Authentication: your email address and password
+func emailCode(recipient, code string) {
+	server := config.SMTPServer
+	from := mail.Address{"", config.SMTPUsername}
+	to := mail.Address{"", recipient}
+	subj := "This is the email subject"
+	body := fmt.Sprintf("This is an example body.\n With two lines. Code: %s", code)
 
-	fmt.Println(config.SMTPPassword)
+	// Setup headers
+	headers := make(map[string]string)
+	headers["From"] = from.String()
+	headers["To"] = to.String()
+	headers["Subject"] = subj
+
+	// Setup message
+	message := ""
+	for k, v := range headers {
+		message += fmt.Sprintf("%s: %s\r\n", k, v)
+	}
+	message += "\r\n" + body
+
+	// Connect to the SMTP Server
+	servername := fmt.Sprintf("%s:465", server)
+
+	host, _, _ := net.SplitHostPort(servername)
 
 	auth := smtp.PlainAuth("", config.SMTPUsername, config.SMTPPassword, config.SMTPServer)
 
-	// Connect to the server, authenticate, set the sender and recipient,
-	// and send the email all in one step.
-	to := []string{recipient}
-	msg := []byte(fmt.Sprintf("To: %s\r\n"+
-		"From: %s\r\n"+
-		"Subject: discount Gophers!\r\n"+
-		"\r\n"+
-		"Code: %s\r\n", recipient, config.SMTPUsername, code))
-	return smtp.SendMail(fmt.Sprintf("%s:25", config.SMTPServer), auth, config.SMTPUsername, to, msg)
+	// TLS config
+	tlsconfig := &tls.Config{
+		InsecureSkipVerify: true,
+		ServerName:         host,
+	}
+
+	// Here is the key, you need to call tls.Dial instead of smtp.Dial
+	// for smtp servers running on 465 that require an ssl connection
+	// from the very beginning (no starttls)
+	conn, err := tls.Dial("tcp", servername, tlsconfig)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	c, err := smtp.NewClient(conn, host)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	// Auth
+	if err = c.Auth(auth); err != nil {
+		log.Panic(err)
+	}
+
+	// To && From
+	if err = c.Mail(from.Address); err != nil {
+		log.Panic(err)
+	}
+
+	if err = c.Rcpt(to.Address); err != nil {
+		log.Panic(err)
+	}
+
+	// Data
+	w, err := c.Data()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	_, err = w.Write([]byte(message))
+	if err != nil {
+		log.Panic(err)
+	}
+
+	err = w.Close()
+	if err != nil {
+		log.Panic(err)
+	}
+
+	c.Quit()
 }
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,10 +143,7 @@ func signupSubmitHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err2 := emailCode(string(s.Email), s.ValidationCode)
-	if err2 != nil {
-		log.Fatal(err2)
-	}
+	emailCode(string(s.Email), s.ValidationCode)
 	http.Redirect(w, r, "/signup/", http.StatusFound)
 }
 
