@@ -35,13 +35,13 @@ func init() {
 }
 
 type Signup struct {
-	Email          []byte
-	ValidationCode string
+	Email            []byte
+	VerificationCode string
 }
 
 func (s *Signup) save() error {
 	filename := string(s.Email) + ".txt"
-	return ioutil.WriteFile(filename, []byte(s.ValidationCode), 0600)
+	return ioutil.WriteFile(filename, []byte(s.VerificationCode), 0600)
 }
 
 func randToken() string {
@@ -54,8 +54,8 @@ func emailCode(recipient, code string) {
 	server := config.SMTPServer
 	from := mail.Address{"", config.SMTPUsername}
 	to := mail.Address{"", recipient}
-	subj := "This is the email subject"
-	body := fmt.Sprintf("This is an example body.\n With two lines. Code: %s", code)
+	subj := "Verification Code"
+	body := fmt.Sprintf("Code: %s", code)
 
 	// Setup headers
 	headers := make(map[string]string)
@@ -137,13 +137,13 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 func signupSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
-	s := &Signup{Email: []byte(email), ValidationCode: randToken()}
+	s := &Signup{Email: []byte(email), VerificationCode: randToken()}
 	err := s.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	emailCode(string(s.Email), s.ValidationCode)
+	emailCode(string(s.Email), s.VerificationCode)
 	http.Redirect(w, r, "/signup/", http.StatusFound)
 }
 
