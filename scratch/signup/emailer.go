@@ -28,7 +28,7 @@ func newRequest(to, subject, body string) *Request {
 func emailCode(recipient, code string) {
 	server := config.SMTPServer
 	subj := fmt.Sprintf("%s Verification Code", config.SiteName)
-	body := fmt.Sprintf("Code: <a href=\"/verify/%s/%s\">%s</a>", config.SiteDomain, code, code)
+	body := fmt.Sprintf("Verification link: <a href=\"%s/verify/%s\">Verify email address</a>", config.SiteDomain, code)
 	r := newRequest(recipient, subj, body)
 	r.sendEmail(server)
 }

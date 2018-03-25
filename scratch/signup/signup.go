@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 )
 
 type Configuration struct {
@@ -20,6 +21,8 @@ type Configuration struct {
 }
 
 var config Configuration
+
+var validPath = regexp.MustCompile("^/verify/([a-zA-Z0-9]+)$")
 
 func init() {
 	file, _ := os.Open("config.json")
@@ -66,9 +69,21 @@ func signupSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/signup/", http.StatusFound)
 }
 
+func verifyHandler(w http.ResponseWriter, r *http.Request) {
+	m := validPath.FindStringSubmatch(r.URL.Path)
+	if m == nil {
+		http.NotFound(w, r)
+		return
+	}
+	fmt.Println(m)
+	code := m[1]
+	fmt.Fprint(w, code)
+}
+
 func main() {
 	http.HandleFunc("/signup/", signupHandler)
 	http.HandleFunc("/signup_submit/", signupSubmitHandler)
+	http.HandleFunc("/verify/", verifyHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
