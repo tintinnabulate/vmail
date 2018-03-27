@@ -12,7 +12,7 @@ import (
 	"regexp"
 )
 
-type Configuration struct {
+type configuration struct {
 	SiteName     string
 	SiteDomain   string
 	SMTPServer   string
@@ -20,7 +20,7 @@ type Configuration struct {
 	SMTPPassword string
 }
 
-var config Configuration
+var config configuration
 
 var validPath = regexp.MustCompile("^/verify/([a-zA-Z0-9]+)$")
 
@@ -28,19 +28,19 @@ func init() {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
-	config = Configuration{}
+	config = configuration{}
 	err := decoder.Decode(&config)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
 }
 
-type Signup struct {
+type signup struct {
 	Email            []byte
 	VerificationCode string
 }
 
-func (s *Signup) save() error {
+func (s *signup) save() error {
 	filename := string(s.Email) + ".txt"
 	return ioutil.WriteFile(filename, []byte(s.VerificationCode), 0600)
 }
@@ -53,13 +53,13 @@ func randToken() string {
 
 func signupHandler(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("signup.html")
-	s := &Signup{}
+	s := &signup{}
 	t.Execute(w, s)
 }
 
 func signupSubmitHandler(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
-	s := &Signup{Email: []byte(email), VerificationCode: randToken()}
+	s := &signup{Email: []byte(email), VerificationCode: randToken()}
 	err := s.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

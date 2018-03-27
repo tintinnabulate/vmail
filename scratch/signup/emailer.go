@@ -9,15 +9,15 @@ import (
 	"net/smtp"
 )
 
-type Request struct {
+type request struct {
 	from    mail.Address
 	to      mail.Address
 	subject string
 	body    string
 }
 
-func newRequest(to, subject, body string) *Request {
-	return &Request{
+func newRequest(to, subject, body string) *request {
+	return &request{
 		from:    mail.Address{"", config.SMTPUsername},
 		to:      mail.Address{"", to},
 		subject: subject,
@@ -33,7 +33,7 @@ func emailCode(recipient, code string) {
 	r.sendEmail(server)
 }
 
-func (r *Request) makeEmailHeaders() map[string]string {
+func (r *request) makeEmailHeaders() map[string]string {
 	headers := make(map[string]string)
 	headers["From"] = r.from.String()
 	headers["To"] = r.to.String()
@@ -41,7 +41,7 @@ func (r *Request) makeEmailHeaders() map[string]string {
 	return headers
 }
 
-func (r *Request) makeEmailMessage() string {
+func (r *request) makeEmailMessage() string {
 	message := ""
 	for k, v := range r.makeEmailHeaders() {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
@@ -50,7 +50,7 @@ func (r *Request) makeEmailMessage() string {
 	return message
 }
 
-func (r *Request) sendEmail(server string) {
+func (r *request) sendEmail(server string) {
 	message := r.makeEmailMessage()
 
 	// Connect to the SMTP Server
