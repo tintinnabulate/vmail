@@ -18,8 +18,8 @@ type request struct {
 
 func newRequest(to, subject, body string) *request {
 	return &request{
-		from:    mail.Address{config.SMTPUsername, config.SMTPUsername},
-		to:      mail.Address{to, to},
+		from:    mail.Address{Name: "", Address: config.SMTPUsername},
+		to:      mail.Address{Name: "", Address: to},
 		subject: subject,
 		body:    body,
 	}
