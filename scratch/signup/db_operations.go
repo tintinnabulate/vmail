@@ -19,7 +19,7 @@ func (db *sql.DB) insertUser(username string) {
 	stmt, err := db.Prepare("INSERT INTO userinfo(username, departname, created) values(?,?,?)")
 	checkErr(err)
 
-	res, err := stmt.Exec("simon", "devteam", "2018-04-04")
+	res, err := stmt.Exec("foobar", "teamname", "2018-04-04")
 	checkErr(err)
 }
 
