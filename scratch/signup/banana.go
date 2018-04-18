@@ -14,13 +14,24 @@ func checkErr(err error) {
 	}
 }
 
-func insertGreeting(db *sql.DB, greeting string, awesomeness int) (int64, error) {
+type Greeting struct {
+	greeting    string
+	awesomeness int
+}
+
+func (g Greeting) insert(db *sql.DB) (int64, error) {
 	stmt, err := db.Prepare("INSERT INTO greetings(greeting, awesomeness) VALUES(?, ?)")
 	checkErr(err)
-	res, err := stmt.Exec(greeting, awesomeness)
+	res, err := stmt.Exec(g.greeting, g.awesomeness)
 	checkErr(err)
 	lastId, err := res.LastInsertId()
 	return lastId, err
+}
+
+func fetchGreeting(db *sql.DB, id int64) (Greeting, error) {
+	var g Greeting
+	err := db.QueryRow("SELECT greeting, awesomeness FROM greetings WHERE id = ?", id).Scan(&g.greeting, &g.awesomeness)
+	return g, err
 }
 
 func main() {
@@ -28,7 +39,11 @@ func main() {
 		"root:banana123@tcp(127.0.0.1:3306)/hello")
 	checkErr(err)
 	defer db.Close()
-	lastId, err := insertGreeting(db, "yo!", 8)
+	g := &Greeting{"hello", 7}
+	lastId, err := g.insert(db)
 	checkErr(err)
 	log.Printf("ID = %d\n", lastId)
+	thatG, err := fetchGreeting(db, lastId)
+	checkErr(err)
+	log.Printf("%+v\n", thatG)
 }
