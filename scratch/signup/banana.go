@@ -1,5 +1,7 @@
 package main
 
+// Got up to here: http://go-database-sql.org/modifying.html
+
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
