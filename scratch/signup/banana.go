@@ -36,6 +36,13 @@ func fetchGreeting(db *sql.DB, id int64) (Greeting, error) {
 	return g, err
 }
 
+func deleteGreeting(db *sql.DB, id int64) error {
+	stmt, err := db.Prepare("DELETE FROM greetings WHERE id = ?")
+	checkErr(err)
+	_, err = stmt.Exec(id)
+	return err
+}
+
 func main() {
 	db, err := sql.Open("mysql",
 		"root:banana123@tcp(127.0.0.1:3306)/hello")
@@ -48,4 +55,6 @@ func main() {
 	thatG, err := fetchGreeting(db, lastId)
 	checkErr(err)
 	log.Printf("%+v\n", thatG)
+	err = deleteGreeting(db, lastId)
+	checkErr(err)
 }
