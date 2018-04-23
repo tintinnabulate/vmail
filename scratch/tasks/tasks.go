@@ -32,6 +32,7 @@ func main() {
 	// [START build_service]
 	ctx := context.Background()
 	client, err := datastore.NewClient(ctx, projID)
+	c := &Client{ctx: ctx, client: client}
 	// [END build_service]
 	if err != nil {
 		log.Fatalf("Could not create datastore client: %v", err)
@@ -55,7 +56,7 @@ func main() {
 				usage()
 				break
 			}
-			key, err := AddTask(ctx, client, args)
+			key, err := c.AddTask(args)
 			if err != nil {
 				log.Printf("Failed to create task: %v", err)
 				break
@@ -68,14 +69,14 @@ func main() {
 				usage()
 				break
 			}
-			if err := MarkDone(ctx, client, n); err != nil {
+			if err := c.MarkDone(n); err != nil {
 				log.Printf("Failed to mark task done: %v", err)
 				break
 			}
 			fmt.Printf("Task %d marked done\n", n)
 
 		case "list":
-			tasks, err := ListTasks(ctx, client)
+			tasks, err := c.ListTasks()
 			if err != nil {
 				log.Printf("Failed to fetch task list: %v", err)
 				break
@@ -88,7 +89,7 @@ func main() {
 				usage()
 				break
 			}
-			if err := DeleteTask(ctx, client, n); err != nil {
+			if err := c.DeleteTask(n); err != nil {
 				log.Printf("Failed to delete task: %v", err)
 				break
 			}
@@ -107,6 +108,11 @@ func main() {
 	}
 }
 
+type Client struct {
+	ctx context.Context
+	client  *datastore.Client
+}
+
 // [START add_entity]
 // Task is the model used to store tasks in the datastore.
 type Task struct {
@@ -118,25 +124,25 @@ type Task struct {
 
 // AddTask adds a task with the given description to the datastore,
 // returning the key of the newly created entity.
-func AddTask(ctx context.Context, client *datastore.Client, desc string) (*datastore.Key, error) {
+func (c *Client) AddTask(desc string) (*datastore.Key, error) {
 	task := &Task{
 		Desc:    desc,
 		Created: time.Now(),
 	}
 	key := datastore.IncompleteKey("Task", nil)
-	return client.Put(ctx, key, task)
+	return c.client.Put(c.ctx, key, task)
 }
 
 // [END add_entity]
 
 // [START update_entity]
 // MarkDone marks the task done with the given ID.
-func MarkDone(ctx context.Context, client *datastore.Client, taskID int64) error {
+func (c *Client) MarkDone(taskID int64) error {
 	// Create a key using the given integer ID.
 	key := datastore.IDKey("Task", taskID, nil)
 
 	// In a transaction load each task, set done to true and store.
-	_, err := client.RunInTransaction(ctx, func(tx *datastore.Transaction) error {
+	_, err := c.client.RunInTransaction(c.ctx, func(tx *datastore.Transaction) error {
 		var task Task
 		if err := tx.Get(key, &task); err != nil {
 			return err
@@ -152,12 +158,12 @@ func MarkDone(ctx context.Context, client *datastore.Client, taskID int64) error
 
 // [START retrieve_entities]
 // ListTasks returns all the tasks in ascending order of creation time.
-func ListTasks(ctx context.Context, client *datastore.Client) ([]*Task, error) {
+func (c *Client) ListTasks() ([]*Task, error) {
 	var tasks []*Task
 
 	// Create a query to fetch all Task entities, ordered by "created".
 	query := datastore.NewQuery("Task").Order("created")
-	keys, err := client.GetAll(ctx, query, &tasks)
+	keys, err := c.client.GetAll(c.ctx, query, &tasks)
 	if err != nil {
 		return nil, err
 	}
@@ -174,8 +180,8 @@ func ListTasks(ctx context.Context, client *datastore.Client) ([]*Task, error) {
 
 // [START delete_entity]
 // DeleteTask deletes the task with the given ID.
-func DeleteTask(ctx context.Context, client *datastore.Client, taskID int64) error {
-	return client.Delete(ctx, datastore.IDKey("Task", taskID, nil))
+func (c *Client) DeleteTask(taskID int64) error {
+	return client.Delete(c.ctx, datastore.IDKey("Task", taskID, nil))
 }
 
 // [END delete_entity]
