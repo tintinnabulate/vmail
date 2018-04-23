@@ -36,19 +36,20 @@ func makeDesc() string {
 func TestAddMarkDelete(t *testing.T) {
     testutil.SystemTest(t)
     ctx := context.Background()
+    c := &Client{ctx: ctx, client: client}
 
     desc := makeDesc()
 
-    k, err := AddTask(ctx, client, desc)
+    k, err := c.AddTask(desc)
     if err != nil {
         t.Fatal(err)
     }
 
-    if err := MarkDone(ctx, client, k.ID); err != nil {
+    if err := c.MarkDone(k.ID); err != nil {
         t.Fatal(err)
     }
 
-    if err := DeleteTask(ctx, client, k.ID); err != nil {
+    if err := c.DeleteTask(k.ID); err != nil {
         t.Fatal(err)
     }
 }
@@ -58,10 +59,11 @@ func TestList(t *testing.T) {
 
     testutil.SystemTest(t)
     ctx := context.Background()
+    c := &Client{ctx: ctx, client: client}
 
     desc := makeDesc()
 
-    k, err := AddTask(ctx, client, desc)
+    k, err := c.AddTask(desc)
     if err != nil {
         t.Fatal(err)
     }
@@ -71,7 +73,7 @@ func TestList(t *testing.T) {
         t.Errorf("k.ID: got %d, want %d", got, want)
     }
 
-    if err := MarkDone(ctx, client, foundTask.id); err != nil {
+    if err := c.MarkDone(foundTask.id); err != nil {
         t.Fatal(err)
     }
 
@@ -80,7 +82,7 @@ func TestList(t *testing.T) {
         t.Error("foundTask.Done: got false, want true")
     }
 
-    if err := DeleteTask(ctx, client, foundTask.id); err != nil {
+    if err := c.DeleteTask(foundTask.id); err != nil {
         t.Fatal(err)
     }
 }
@@ -88,7 +90,7 @@ func TestList(t *testing.T) {
 func listAndGetTask(t *testing.T, desc string) *Task {
     ctx := context.Background()
 
-    tasks, err := ListTasks(ctx, client)
+    tasks, err := c.ListTasks()
     if err != nil {
         t.Fatal(err)
     }

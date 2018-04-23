@@ -181,7 +181,7 @@ func (c *Client) ListTasks() ([]*Task, error) {
 // [START delete_entity]
 // DeleteTask deletes the task with the given ID.
 func (c *Client) DeleteTask(taskID int64) error {
-	return client.Delete(c.ctx, datastore.IDKey("Task", taskID, nil))
+	return c.client.Delete(c.ctx, datastore.IDKey("Task", taskID, nil))
 }
 
 // [END delete_entity]
