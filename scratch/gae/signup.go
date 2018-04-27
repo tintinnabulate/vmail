@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/mail"
 )
 
 type configuration struct {
@@ -24,6 +27,10 @@ var (
 	config    configuration
 	validPath = regexp.MustCompile("^/verify/([a-zA-Z0-9]+)$")
 )
+
+const emailBody = `
+Bananas
+`
 
 func checkErr(err error) {
 	if err != nil {
@@ -62,11 +69,20 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		code := randToken()
 		_, err := AddSignup(r, email, code)
 		if err != nil {
-			fmt.Fprintf(w, "Goose: %s", err)
+			fmt.Fprint(w, err.Error())
 		} else {
-			fmt.Fprint(w, "Goose!")
+			fmt.Fprint(w, "Success")
 		}
-		//emailCode(email, code) // TODO: get this working
+		ctx := appengine.NewContext(r)
+		msg := &mail.Message{
+			Sender:  "[DO NOT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
+			To:      []string{email},
+			Subject: fmt.Sprintf("Verification Code: %s", code),
+			Body:    emailBody,
+		}
+		if err := mail.Send(ctx, msg); err != nil {
+			fmt.Fprintf(w, err.Error()) // TODO: fix. we don't want to print error to user browser
+		}
 	default:
 		fmt.Fprintf(w, "Sorry, only GET and POST are supported")
 	}
@@ -81,8 +97,8 @@ func verifyHandler(w http.ResponseWriter, r *http.Request) {
 	code := m[1]
 	err := MarkVerified(r, code)
 	if err != nil {
-		fmt.Fprintf(w, "err: %s", err.Error())
+		fmt.Fprintf(w, "Error: %s", err.Error())
 	} else {
-		fmt.Fprint(w, "Signedup")
+		fmt.Fprint(w, "Thank you for verifying your email address. You can now proceed with registration")
 	}
 }
