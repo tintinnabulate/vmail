@@ -1,5 +1,5 @@
 all:
-	go run signup.go db_operations.go
+	goapp serve
 test:
 	goapp test
 deploy:
