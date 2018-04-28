@@ -1,48 +1,68 @@
-INFO     2018-04-28 21:28:21,383 devappserver2.py:127] Skipping SDK update check.
-WARNING  2018-04-28 21:28:21,383 devappserver2.py:143] DEFAULT_VERSION_HOSTNAME will not be set correctly with --port=0
-WARNING  2018-04-28 21:28:21,463 simple_search_stub.py:1196] Could not read search indexes from /var/folders/db/d6hm675s7zjdq48mfl0czl2c0000gn/T/appengine.testapp.simon/search_indexes
-INFO     2018-04-28 21:28:21,465 api_server.py:307] Starting API server at: http://localhost:54152
-INFO     2018-04-28 21:28:21,469 dispatcher.py:256] Starting module "default" running at: http://localhost:54153
-INFO     2018-04-28 21:28:21,473 admin_server.py:152] Starting admin server at: http://localhost:54154
-.context: context.Background.WithValue((*string)(0x16ac0d0), &aetest.context{req:(*http.Request)(0xc4201e0000), instance:(*aetest.instance)(0xc42006d0e0), session:"942574215bd2033154a8c1fb55cf7be1"})
+INFO     2018-04-28 21:38:15,730 devappserver2.py:127] Skipping SDK update check.
+WARNING  2018-04-28 21:38:15,731 devappserver2.py:143] DEFAULT_VERSION_HOSTNAME will not be set correctly with --port=0
+WARNING  2018-04-28 21:38:15,810 simple_search_stub.py:1196] Could not read search indexes from /var/folders/db/d6hm675s7zjdq48mfl0czl2c0000gn/T/appengine.testapp.simon/search_indexes
+INFO     2018-04-28 21:38:15,812 api_server.py:307] Starting API server at: http://localhost:54259
+INFO     2018-04-28 21:38:15,816 dispatcher.py:256] Starting module "default" running at: http://localhost:54260
+INFO     2018-04-28 21:38:15,819 admin_server.py:152] Starting admin server at: http://localhost:54261
+.context: context.Background.WithValue((*string)(0x16ab0d0), &aetest.context{req:(*http.Request)(0xc4201ce000), instance:(*aetest.instance)(0xc42006d080), session:"838c2086c92e619219a4987ed87e6ef0"})
 w: &{200 map[]  false <nil> map[] false}
-r: &{GET /monkeys/dong HTTP/1.1 1 1 map[] <nil> <nil> 0 [] false  map[] map[] <nil> map[]   <nil> <nil> <nil> 0xc4201de930}
+r: &{GET /monkeys/dong HTTP/1.1 1 1 map[] <nil> <nil> 0 [] false  map[] map[] <nil> map[]   <nil> <nil> <nil> 0xc4201cc930}
 f: 0x138d760
 ..
 3 total assertions
 
-INFO     2018-04-28 21:28:22,011 devappserver2.py:127] Skipping SDK update check.
-WARNING  2018-04-28 21:28:22,012 devappserver2.py:143] DEFAULT_VERSION_HOSTNAME will not be set correctly with --port=0
-WARNING  2018-04-28 21:28:22,090 simple_search_stub.py:1196] Could not read search indexes from /var/folders/db/d6hm675s7zjdq48mfl0czl2c0000gn/T/appengine.testapp.simon/search_indexes
-INFO     2018-04-28 21:28:22,093 api_server.py:307] Starting API server at: http://localhost:54155
-INFO     2018-04-28 21:28:22,097 dispatcher.py:256] Starting module "default" running at: http://localhost:54156
-INFO     2018-04-28 21:28:22,101 admin_server.py:152] Starting admin server at: http://localhost:54157
-.context: context.Background.WithValue((*string)(0x16ac0d0), &aetest.context{req:(*http.Request)(0xc420212000), instance:(*aetest.instance)(0xc4201e6780), session:"c5732da81782930fbdd0fc8b6fc308a5"})
+INFO     2018-04-28 21:38:16,355 devappserver2.py:127] Skipping SDK update check.
+WARNING  2018-04-28 21:38:16,355 devappserver2.py:143] DEFAULT_VERSION_HOSTNAME will not be set correctly with --port=0
+WARNING  2018-04-28 21:38:16,434 simple_search_stub.py:1196] Could not read search indexes from /var/folders/db/d6hm675s7zjdq48mfl0czl2c0000gn/T/appengine.testapp.simon/search_indexes
+INFO     2018-04-28 21:38:16,437 api_server.py:307] Starting API server at: http://localhost:54262
+INFO     2018-04-28 21:38:16,441 dispatcher.py:256] Starting module "default" running at: http://localhost:54263
+INFO     2018-04-28 21:38:16,443 admin_server.py:152] Starting admin server at: http://localhost:54264
+.context: context.Background.WithValue((*string)(0x16ab0d0), &aetest.context{req:(*http.Request)(0xc42021a000), instance:(*aetest.instance)(0xc4201d6780), session:"938f58b2f727116152459495984d889e"})
 w: &{200 map[]  false <nil> map[] false}
 r: &{POST /signup/lolz HTTP/1.1 1 1 map[] <nil> <nil> 0 [] false  map[] map[] <nil> map[]   <nil> <nil> <nil> 0xc4200189f0}
-f: 0x138df60
+f: 0x138de20
 got here!
-body: <nil>E
+got here 3!
+got here 4!
+INFO     2018-04-28 21:38:17,276 mail_stub.py:169] MailService.Send
+  From: [DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>
+  To: lolz
+  Subject: Your verification code
+  Body:
+    Content-type: text/plain
+    Data length: 39
+INFO     2018-04-28 21:38:17,276 mail_stub.py:378] You are not currently sending out real email.  If you have sendmail installed you can use it by using the server with --enable_sendmail
+got here 5!
+2018/04/28 22:38:17 appengine: NewContext passed an unknown http.Request
+E
 Errors:
 
   * /Users/simon/git/registration/scratch/signup/signup_test.go 
-  Line 23: - runtime error: invalid memory address or nil pointer dereference 
-  goroutine 18 [running]:
-  panic(0x1401c20, 0x16ac240)
+  Line 23: - appengine: NewContext passed an unknown http.Request 
+  goroutine 33 [running]:
+  panic(0x13d8600, 0xc4201968b0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/runtime/panic.go:489 +0x2cf
-  encoding/json.(*Decoder).refill(0xc420226000, 0x1c0, 0x1c0)
-        /Users/simon/Downloads/go_appengine/goroot-1.8/src/encoding/json/stream.go:152 +0xec
-  encoding/json.(*Decoder).readValue(0xc420226000, 0x0, 0x0, 0x100fc18)
-        /Users/simon/Downloads/go_appengine/goroot-1.8/src/encoding/json/stream.go:128 +0x1ca
-  encoding/json.(*Decoder).Decode(0xc420226000, 0x13bd740, 0xc420018a50, 0x0, 0x0)
-        /Users/simon/Downloads/go_appengine/goroot-1.8/src/encoding/json/stream.go:57 +0x85
-  _/Users/simon/git/registration/scratch/signup.CreateSignupEndpoint(0x19c40d0, 0xc420018150, 0x1687c80, 0xc4200127c0, 0xc420212e00)
-        /Users/simon/git/registration/scratch/signup/signup.go:58 +0x25f
-  _/Users/simon/git/registration/scratch/signup.CreateContextHandlerToHttpHandler.func1.1(0x1687c80, 0xc4200127c0, 0xc420212e00)
+  log.Panic(0xc4201250f8, 0x1, 0x1)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/log/log.go:322 +0xc0
+  appengine_internal.NewContext(0xc42021ae00, 0xc4201251a0, 0x1bc40acdc4)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/appengine_internal/api_go18.go:26 +0x173
+  appengine.NewContext(0xc42021ae00, 0x1863030, 0xc42007e008)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/appengine/appengine.go:55 +0x2b
+  google.golang.org/appengine/internal.WithContext(0x1863030, 0xc42006ee58, 0xc42021ae00, 0x0, 0x1863030)
+        /Users/simon/Work/go/src/google.golang.org/appengine/internal/api_classic.go:63 +0x2b
+  google.golang.org/appengine.WithContext(0x1863030, 0xc42006ee58, 0xc42021ae00, 0x1863030, 0xc42006ee58)
+        /Users/simon/Work/go/src/google.golang.org/appengine/appengine.go:73 +0x3f
+  google.golang.org/appengine.NewContext(0xc42021ae00, 0x0, 0xc)
+        /Users/simon/Work/go/src/google.golang.org/appengine/appengine.go:66 +0x67
+  _/Users/simon/git/registration/scratch/signup.AddSignup(0xc42021ae00, 0x148c6d5, 0x4, 0xc42000ec00, 0x8, 0x0, 0x0, 0x0)
+        /Users/simon/git/registration/scratch/signup/db_operations.go:25 +0x40
+  _/Users/simon/git/registration/scratch/signup.CreateSignupEndpoint(0x18630d0, 0xc420018150, 0x1686c80, 0xc4200127c0, 0xc42021ae00)
+        /Users/simon/git/registration/scratch/signup/signup.go:67 +0x410
+  _/Users/simon/git/registration/scratch/signup.CreateContextHandlerToHttpHandler.func1.1(0x1686c80, 0xc4200127c0, 0xc42021ae00)
         /Users/simon/git/registration/scratch/signup/signup_test.go:23 +0x22c
-  net/http.HandlerFunc.ServeHTTP(0xc42000a5e0, 0x1687c80, 0xc4200127c0, 0xc420212e00)
+  net/http.HandlerFunc.ServeHTTP(0xc42000a5e0, 0x1686c80, 0xc4200127c0, 0xc42021ae00)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/http/server.go:1942 +0x44
-  github.com/gorilla/mux.(*Router).ServeHTTP(0xc4201d62a0, 0x1687c80, 0xc4200127c0, 0xc420212e00)
+  github.com/gorilla/mux.(*Router).ServeHTTP(0xc4201c42a0, 0x1686c80, 0xc4200127c0, 0xc42021ae00)
         /Users/simon/Work/go/src/github.com/gorilla/mux/mux.go:159 +0x101
   _/Users/simon/git/registration/scratch/signup.TestCreateSignupEndpoint.func1.1()
         /Users/simon/git/registration/scratch/signup/signup_test.go:61 +0x5f
@@ -50,7 +70,7 @@ Errors:
         /Users/simon/Work/go/src/github.com/jtolds/gls/context.go:97 +0x308
   github.com/jtolds/gls.EnsureGoroutineId(0xc420018900)
         /Users/simon/Work/go/src/github.com/jtolds/gls/gid.go:19 +0x11a
-  github.com/jtolds/gls.(*ContextManager).SetValues(0xc420193ad0, 0xc4200188a0, 0xc42000aa20)
+  github.com/jtolds/gls.(*ContextManager).SetValues(0xc420181ae0, 0xc4200188a0, 0xc42000aa20)
         /Users/simon/Work/go/src/github.com/jtolds/gls/context.go:98 +0x19d
   _/Users/simon/git/registration/scratch/signup.TestCreateSignupEndpoint.func1()
         /Users/simon/git/registration/scratch/signup/signup_test.go:64 +0x2c9
@@ -66,87 +86,115 @@ Errors:
         /Users/simon/Work/go/src/github.com/jtolds/gls/stack_tags.go:49 +0x3a
   github.com/jtolds/gls.EnsureGoroutineId(0xc420018210)
         /Users/simon/Work/go/src/github.com/jtolds/gls/gid.go:24 +0xd2
-  github.com/jtolds/gls.(*ContextManager).SetValues(0xc420193ad0, 0xc4200181b0, 0xc42000a340)
+  github.com/jtolds/gls.(*ContextManager).SetValues(0xc420181ae0, 0xc4200181b0, 0xc42000a340)
         /Users/simon/Work/go/src/github.com/jtolds/gls/context.go:98 +0x19d
-  _/Users/simon/git/registration/scratch/signup.TestCreateSignupEndpoint(0xc4202021a0)
+  _/Users/simon/git/registration/scratch/signup.TestCreateSignupEndpoint(0xc4201fa1a0)
         /Users/simon/git/registration/scratch/signup/signup_test.go:65 +0x145
-  testing.tRunner(0xc4202021a0, 0x14a14a8)
+  testing.tRunner(0xc4201fa1a0, 0x14a10e0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:657 +0x96
   created by testing.(*T).Run
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:697 +0x2ca
   
   goroutine 1 [chan receive]:
-  testing.(*T).Run(0xc420079ba0, 0x149240c, 0x18, 0x14a14a8, 0x1059101)
+  testing.(*T).Run(0xc420077a00, 0x1492042, 0x18, 0x14a10e0, 0x1059101)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:698 +0x2f4
-  testing.runTests.func1(0xc420079ba0)
+  testing.runTests.func1(0xc420077a00)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:882 +0x67
-  testing.tRunner(0xc420079ba0, 0xc420173de0)
+  testing.tRunner(0xc420077a00, 0xc420161de0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:657 +0x96
-  testing.runTests(0xc42019d0e0, 0x16adfe0, 0x2, 0x2, 0xc42019d0c0)
+  testing.runTests(0xc42018b140, 0x16acfe0, 0x2, 0x2, 0xc42018b120)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:888 +0x2c1
-  testing.(*M).Run(0xc420173f20, 0xc420173f20)
+  testing.(*M).Run(0xc420161f20, 0xc420161f20)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/testing/testing.go:822 +0xfc
   main.main()
         _/Users/simon/git/registration/scratch/signup/_test/_testmain.go:44 +0xf7
   
-  goroutine 35 [syscall]:
-  syscall.Syscall(0x3, 0x3, 0xc4201da000, 0x2000, 0xc42003ec88, 0x100f3c2, 0x1784000)
+  goroutine 20 [syscall]:
+  syscall.Syscall(0x3, 0x3, 0xc4201c8000, 0x2000, 0xc42003ec88, 0x100f3c2, 0x1783000)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/syscall/asm_darwin_amd64.s:16 +0x5
-  syscall.read(0x3, 0xc4201da000, 0x2000, 0x2000, 0x0, 0x8, 0xc420028800)
+  syscall.read(0x3, 0xc4201c8000, 0x2000, 0x2000, 0x0, 0x8, 0xc420052000)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/syscall/zsyscall_darwin_amd64.go:973 +0x55
-  syscall.Read(0x3, 0xc4201da000, 0x2000, 0x2000, 0xc42003ecd8, 0x104011b, 0x2000)
+  syscall.Read(0x3, 0xc4201c8000, 0x2000, 0x2000, 0xc42003ecd8, 0x104011b, 0x2000)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/syscall/syscall_unix.go:162 +0x49
-  os.(*File).read(0xc4200821a0, 0xc4201da000, 0x2000, 0x2000, 0xc42000a220, 0xc42003ed20, 0x1121b5d)
+  os.(*File).read(0xc42007e1a0, 0xc4201c8000, 0x2000, 0x2000, 0xc42000a220, 0xc42003ed20, 0x1121b5d)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/os/file_unix.go:169 +0x6a
-  os.(*File).Read(0xc4200821a0, 0xc4201da000, 0x2000, 0x2000, 0xc42000a220, 0x0, 0x0)
+  os.(*File).Read(0xc42007e1a0, 0xc4201c8000, 0x2000, 0x2000, 0xc42000a220, 0x0, 0x0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/os/file.go:101 +0x76
-  io.(*teeReader).Read(0xc42019d240, 0xc4201da000, 0x2000, 0x2000, 0xc42003eda0, 0x1054310, 0xc4200751e0)
+  io.(*teeReader).Read(0xc42018b2a0, 0xc4201c8000, 0x2000, 0x2000, 0xc42003eda0, 0x1054310, 0xc4200556c0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/io.go:523 +0x55
-  io/ioutil.devNull.ReadFrom(0x0, 0x1680280, 0xc42019d240, 0x140cfe0, 0xc420080f01, 0x1984028)
+  io/ioutil.devNull.ReadFrom(0x0, 0x167f280, 0xc42018b2a0, 0x140cc20, 0xc42006b001, 0x1823028)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/ioutil/ioutil.go:144 +0x85
-  io/ioutil.(*devNull).ReadFrom(0x16d39b0, 0x1680280, 0xc42019d240, 0x1984028, 0x16d39b0, 0x1)
+  io/ioutil.(*devNull).ReadFrom(0x16d29b0, 0x167f280, 0xc42018b2a0, 0x1823028, 0x16d29b0, 0x1)
         <autogenerated>:6 +0x61
-  io.copyBuffer(0x1681900, 0x16d39b0, 0x1680280, 0xc42019d240, 0x0, 0x0, 0x0, 0x1, 0x138c4d8, 0xc42003ee01)
+  io.copyBuffer(0x1680900, 0x16d29b0, 0x167f280, 0xc42018b2a0, 0x0, 0x0, 0x0, 0x1, 0x138c4d8, 0xc42003ee01)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/io.go:384 +0x2cb
-  io.Copy(0x1681900, 0x16d39b0, 0x1680280, 0xc42019d240, 0x2, 0x2, 0xc42001c600)
+  io.Copy(0x1680900, 0x16d29b0, 0x167f280, 0xc42018b2a0, 0x2, 0x2, 0xc42001b300)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/io.go:360 +0x68
-  appengine/aetest.(*instance).startChild.func2(0x1680280, 0xc42019d240, 0xc42006d0e0, 0xc42006d3e0)
+  appengine/aetest.(*instance).startChild.func2(0x167f280, 0xc42018b2a0, 0xc42006d080, 0xc42006d380)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/appengine/aetest/instance.go:274 +0x27e
   created by appengine/aetest.(*instance).startChild
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/appengine/aetest/instance.go:275 +0x8ff
   
-  goroutine 19 [syscall]:
-  syscall.Syscall(0x3, 0x5, 0xc420208000, 0x2000, 0xc420020c88, 0x100f3c2, 0x17844b0)
+  goroutine 34 [syscall]:
+  syscall.Syscall(0x3, 0x5, 0xc420208000, 0x2000, 0x2, 0xc420208000, 0xbb)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/syscall/asm_darwin_amd64.s:16 +0x5
-  syscall.read(0x5, 0xc420208000, 0x2000, 0x2000, 0x0, 0x8, 0xc420028400)
+  syscall.read(0x5, 0xc420208000, 0x2000, 0x2000, 0xbb, 0x2000, 0xbb)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/syscall/zsyscall_darwin_amd64.go:973 +0x55
-  syscall.Read(0x5, 0xc420208000, 0x2000, 0x2000, 0xc420020cd8, 0x104011b, 0x2000)
+  syscall.Read(0x5, 0xc420208000, 0x2000, 0x2000, 0xc420208000, 0xc420202508, 0x10812a2)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/syscall/syscall_unix.go:162 +0x49
-  os.(*File).read(0xc4201e4098, 0xc420208000, 0x2000, 0x2000, 0xc420068f20, 0xc420020d20, 0x1121b5d)
+  os.(*File).read(0xc4201d2098, 0xc420208000, 0x2000, 0x2000, 0x0, 0xbb, 0x0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/os/file_unix.go:169 +0x6a
-  os.(*File).Read(0xc4201e4098, 0xc420208000, 0x2000, 0x2000, 0xc420068f20, 0x0, 0x0)
+  os.(*File).Read(0xc4201d2098, 0xc420208000, 0x2000, 0x2000, 0xbb, 0x0, 0x0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/os/file.go:101 +0x76
-  io.(*teeReader).Read(0xc420068bc0, 0xc420208000, 0x2000, 0x2000, 0xc420020da0, 0x1054310, 0xc4200751e0)
+  io.(*teeReader).Read(0xc4201d4b80, 0xc420208000, 0x2000, 0x2000, 0xbb, 0x0, 0x0)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/io.go:523 +0x55
-  io/ioutil.devNull.ReadFrom(0x0, 0x1680280, 0xc420068bc0, 0x140cfe0, 0xc420080f01, 0x1984028)
+  io/ioutil.devNull.ReadFrom(0x0, 0x167f280, 0xc4201d4b80, 0x140cc20, 0xc42006b101, 0x1823028)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/ioutil/ioutil.go:144 +0x85
-  io/ioutil.(*devNull).ReadFrom(0x16d39b0, 0x1680280, 0xc420068bc0, 0x1984028, 0x16d39b0, 0x1)
+  io/ioutil.(*devNull).ReadFrom(0x16d29b0, 0x167f280, 0xc4201d4b80, 0x1823028, 0x16d29b0, 0x1)
         <autogenerated>:6 +0x61
-  io.copyBuffer(0x1681900, 0x16d39b0, 0x1680280, 0xc420068bc0, 0x0, 0x0, 0x0, 0x1, 0x138c4d8, 0xc420020e01)
+  io.copyBuffer(0x1680900, 0x16d29b0, 0x167f280, 0xc4201d4b80, 0x0, 0x0, 0x0, 0x1, 0x138c4d8, 0xc420202601)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/io.go:384 +0x2cb
-  io.Copy(0x1681900, 0x16d39b0, 0x1680280, 0xc420068bc0, 0x2, 0x2, 0xc42001b300)
+  io.Copy(0x1680900, 0x16d29b0, 0x167f280, 0xc4201d4b80, 0x2, 0x2, 0xc42001c600)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/io/io.go:360 +0x68
-  appengine/aetest.(*instance).startChild.func2(0x1680280, 0xc420068bc0, 0xc4201e6780, 0xc4201e6a80)
+  appengine/aetest.(*instance).startChild.func2(0x167f280, 0xc4201d4b80, 0xc4201d6780, 0xc4201d6a80)
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/appengine/aetest/instance.go:274 +0x27e
   created by appengine/aetest.(*instance).startChild
         /Users/simon/Downloads/go_appengine/goroot-1.8/src/appengine/aetest/instance.go:275 +0x8ff
+  
+  goroutine 5 [IO wait]:
+  net.runtime_pollWait(0x1824118, 0x72, 0x6)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/runtime/netpoll.go:164 +0x59
+  net.(*pollDesc).wait(0xc420230538, 0x72, 0x1681180, 0x167d300)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/fd_poll_runtime.go:75 +0x38
+  net.(*pollDesc).waitRead(0xc420230538, 0xc420236000, 0x1000)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/fd_poll_runtime.go:80 +0x34
+  net.(*netFD).Read(0xc4202304d0, 0xc420236000, 0x1000, 0x1000, 0x0, 0x1681180, 0x167d300)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/fd_unix.go:250 +0x1b7
+  net.(*conn).Read(0xc42000c0d0, 0xc420236000, 0x1000, 0x1000, 0x0, 0x0, 0x0)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/net.go:181 +0x70
+  net/http.(*persistConn).Read(0xc4201a6b40, 0xc420236000, 0x1000, 0x1000, 0x4, 0x10523e0, 0xc42006d440)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/http/transport.go:1316 +0x14b
+  bufio.(*Reader).fill(0xc4201a4c60)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/bufio/bufio.go:97 +0x117
+  bufio.(*Reader).Peek(0xc4201a4c60, 0x1, 0xc42003bbe5, 0x1, 0x0, 0xc4201a4cc0, 0x0)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/bufio/bufio.go:129 +0x67
+  net/http.(*persistConn).readLoop(0xc4201a6b40)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/http/transport.go:1474 +0x196
+  created by net/http.(*Transport).dialConn
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/http/transport.go:1117 +0xa35
+  
+  goroutine 6 [select]:
+  net/http.(*persistConn).writeLoop(0xc4201a6b40)
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/http/transport.go:1704 +0x43a
+  created by net/http.(*Transport).dialConn
+        /Users/simon/Downloads/go_appengine/goroot-1.8/src/net/http/transport.go:1118 +0xa5a
   
 
 
 5 total assertions
 
---- FAIL: TestCreateSignupEndpoint (0.63s)
+--- FAIL: TestCreateSignupEndpoint (1.46s)
 FAIL
 exit status 1
-FAIL    _/Users/simon/git/registration/scratch/signup   1.286s
+FAIL    _/Users/simon/git/registration/scratch/signup   2.114s
 

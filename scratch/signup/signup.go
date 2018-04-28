@@ -23,9 +23,8 @@ func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Re
 	params := mux.Vars(req)
 	w.Header().Set("Content-Type", "application/json")
 	var verification Verification
-	_ = json.NewDecoder(req.Body).Decode(&verification)
 	verification.Code = params["code"]
-	err := MarkVerified(req, verification.Code)
+	err := MarkVerified(ctx, verification.Code)
 	verification.Success = true
 	verification.Note = ""
 	if err != nil {
@@ -54,12 +53,6 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	w.Header().Set("Content-Type", "application/json")
 	var email Email
 	fmt.Println("got here!")
-	fmt.Printf("body: %v", req.Body)
-	err := json.NewDecoder(req.Body).Decode(&email)
-	fmt.Println("got here 2!")
-	if err != nil {
-		fmt.Printf("%s", err.Error())
-	}
 	email.Address = params["email"]
 	fmt.Println("got here 3!")
 	code := randToken()
@@ -71,7 +64,7 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 		return
 	}
 	fmt.Println("got here 5!")
-	_, err = AddSignup(req, email.Address, code)
+	_, err := AddSignup(ctx, email.Address, code)
 	fmt.Println("got here 6!")
 	if err != nil {
 		email.Success = false
@@ -79,6 +72,7 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	} else {
 		email.Success = true
 	}
+	fmt.Println("got here 7!")
 	json.NewEncoder(w).Encode(email)
 }
 

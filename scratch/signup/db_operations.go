@@ -2,10 +2,8 @@ package main
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 
 	"golang.org/x/net/context"
@@ -21,8 +19,7 @@ type Signup struct {
 
 // AddSignup adds a signup with the given verification code to the datastore,
 // returning the key of the newly created entity.
-func AddSignup(r *http.Request, email, code string) (*datastore.Key, error) {
-	ctx := appengine.NewContext(r)
+func AddSignup(ctx context.Context, email, code string) (*datastore.Key, error) {
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
 	signup := &Signup{
 		CreationTimestamp: time.Now(),
@@ -34,8 +31,7 @@ func AddSignup(r *http.Request, email, code string) (*datastore.Key, error) {
 }
 
 // MarkDone marks the signup as verified with the given ID.
-func MarkVerified(r *http.Request, code string) error {
-	ctx := appengine.NewContext(r)
+func MarkVerified(ctx context.Context, code string) error {
 	// Create a key using the given integer ID.
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
 
