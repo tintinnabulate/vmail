@@ -1,8 +1,0 @@
-runtime: go
-api_version: go1
-module: apitest
-
-handlers:
-- url: /.*
-  script: _go_app
-  #login: required
