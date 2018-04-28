@@ -1,10 +1,12 @@
 package main
 
 import (
-	c "github.com/smartystreets/goconvey/convey"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	c "github.com/smartystreets/goconvey/convey"
 
 	"golang.org/x/net/context"
 	//"google.golang.org/appengine"
@@ -32,6 +34,7 @@ func TestDoFoo(t *testing.T) {
 		c.Convey("It should return a 200 response", func() {
 			r.ServeHTTP(record, req)
 			c.So(record.Code, c.ShouldEqual, 200)
+			c.So(fmt.Sprint(record.Body), c.ShouldEqual, "foo hoi")
 		})
 	})
 }
