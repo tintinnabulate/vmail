@@ -61,3 +61,24 @@ func TestCreateSignupEndpoint(t *testing.T) {
 		})
 	})
 }
+
+func TestVerifySignupEndpoint(t *testing.T) {
+	LoadConfig()
+
+	ctx, _, _ := aetest.NewContext()
+
+	c.Convey("When you want to do foo", t, func() {
+		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
+		record := httptest.NewRecorder()
+
+		req, err := http.NewRequest("GET", "/verify/lolz", nil)
+		c.So(err, c.ShouldBeNil)
+
+		c.Convey("It should return a 200 response", func() {
+			r.ServeHTTP(record, req)
+			c.So(record.Code, c.ShouldEqual, 200)
+			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"code":"lolz","Success":false,"Note":"no such verification code"}
+`)
+		})
+	})
+}
