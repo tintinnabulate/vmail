@@ -14,7 +14,7 @@ import (
 	"google.golang.org/appengine/mail"
 )
 
-func VerifyCodeEndpoint(w http.ResponseWriter, req *http.Request) {
+func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	w.Header().Set("Content-Type", "application/json")
 	var verification Verification
@@ -44,14 +44,13 @@ func EmailVerificationCode(ctx context.Context, address, code string) error {
 	return mail.Send(ctx, msg)
 }
 
-func CreateSignupEndpoint(w http.ResponseWriter, req *http.Request) {
+func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	w.Header().Set("Content-Type", "application/json")
 	var email Email
 	_ = json.NewDecoder(req.Body).Decode(&email)
 	email.Address = params["email"]
 	code := randToken()
-	ctx := appengine.NewContext(req)
 	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
 		email.Success = false
 		email.Note = err.Error()
@@ -107,21 +106,13 @@ func checkErr(err error) {
 	}
 }
 
-func Initialise() {
+func LoadConfig() {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
 	config = configuration{}
 	err := decoder.Decode(&config)
 	checkErr(err)
-	appRouter := mux.NewRouter()
-	appRouter.HandleFunc("/verify/{code}", VerifyCodeEndpoint).Methods("GET")
-	appRouter.HandleFunc("/signup/{email}", CreateSignupEndpoint).Methods("POST")
-	http.Handle("/", appRouter)
-}
-
-func init() {
-	Initialise()
 }
 
 func randToken() string {
@@ -130,6 +121,44 @@ func randToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
-func main() {
-	log.Fatal(http.ListenAndServe(":8080", nil))
+/*
+Standard http handler
+*/
+type HandlerFunc func(w http.ResponseWriter, r *http.Request)
+
+/*
+Our context.Context http handler
+*/
+type ContextHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request)
+
+/*
+  Higher order function for changing a HandlerFunc to a ContextHandlerFunc,
+  usually creating the context.Context along the way.
+*/
+type ContextHandlerToHandlerHOF func(f ContextHandlerFunc) HandlerFunc
+
+/*
+Creates a new Context and uses it when calling f
+*/
+func ContextHanderToHttpHandler(f ContextHandlerFunc) HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := appengine.NewContext(r)
+		f(ctx, w, r)
+	}
+}
+
+/*
+Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
+*/
+func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
+	appRouter := mux.NewRouter()
+	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
+	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
+
+	return r
+}
+
+func init() {
+	LoadConfig()
+	http.Handle("/", CreateHandler(ContextHanderToHttpHandler))
 }

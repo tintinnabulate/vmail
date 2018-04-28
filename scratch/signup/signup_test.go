@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"os"
-	"reflect"
 	"testing"
 
-	"google.golang.org/appengine/mail"
+	c "github.com/smartystreets/goconvey/convey"
+
+	"golang.org/x/net/context"
+	//"google.golang.org/appengine"
+	"google.golang.org/appengine/aetest"
 )
 
 var emailBody2 = `
@@ -18,54 +20,46 @@ Yours randomly,
 Bert.
 `
 
-func TestMain(m *testing.M) {
-	Initialise()
-
-	code := m.Run()
-
-	os.Exit(code)
-}
-
-func executeRequest(req *http.Request) *httptest.ResponseRecorder {
-	rr := httptest.NewRecorder()
-	appRouter.ServeHTTP(rr, req)
-
-	return rr
-}
-func checkResponseCode(t *testing.T, expected, actual int) {
-	if expected != actual {
-		t.Errorf("Expected response code %d. Got %d\n", expected, actual)
-	}
-}
-
-func TestComposeVerificationEmail(t *testing.T) {
-	code := "abcde"
-	email := "foo@bar.baz"
-	want := &mail.Message{
-		Sender:  "[DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
-		To:      []string{email},
-		Subject: "Your verification code",
-		Body:    fmt.Sprintf(emailBody2, code),
-	}
-	if msg := ComposeVerificationEmail(email, code); !reflect.DeepEqual(msg, want) {
-		t.Errorf("composeMessage() = %+v, want %+v", msg, want)
-	}
-}
-
-//func TestCreateSignupEndpoint(t *testing.T) {
-//	req, _ := http.NewRequest("POST", "/signup/justwanttouseappspot@gmail.com", nil)
-//	response := executeRequest(req)
-//	checkResponseCode(t, http.StatusOK, response.Code)
-//	if body := response.Body.String(); body != "[]" {
-//		t.Errorf("Expected an empty array. Got %s", body)
+//func TestComposeVerificationEmail(t *testing.T) {
+//	code := "abcde"
+//	email := "foo@bar.baz"
+//	want := &mail.Message{
+//		Sender:  "[DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
+//		To:      []string{email},
+//		Subject: "Your verification code",
+//		Body:    fmt.Sprintf(emailBody2, code),
+//	}
+//	if msg := ComposeVerificationEmail(email, code); !reflect.DeepEqual(msg, want) {
+//		t.Errorf("composeMessage() = %+v, want %+v", msg, want)
 //	}
 //}
 
-func TestVerifySignup(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/verify/4839202", nil)
-	response := executeRequest(req)
-	checkResponseCode(t, http.StatusOK, response.Code)
-	if body := response.Body.String(); body != "[]" {
-		t.Errorf("Expected an empty array. Got %s", body)
+///
+
+func CreateContextHandlerToHttpHandler(ctx context.Context) ContextHandlerToHandlerHOF {
+	return func(f ContextHandlerFunc) HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			f(ctx, w, r)
+		}
 	}
+}
+
+func TestVerifySignupEndpoint(t *testing.T) {
+	LoadConfig()
+
+	ctx, _, _ := aetest.NewContext()
+
+	c.Convey("When you want to do foo", t, func() {
+		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
+		record := httptest.NewRecorder()
+
+		req, err := http.NewRequest("GET", "/verify/38739873", nil)
+		c.So(err, c.ShouldBeNil)
+
+		c.Convey("It should return a 200 response", func() {
+			r.ServeHTTP(record, req)
+			c.So(record.Code, c.ShouldEqual, 200)
+			c.So(fmt.Sprint(record.Body), c.ShouldEqual, "foo hoi")
+		})
+	})
 }
