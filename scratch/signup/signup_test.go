@@ -16,10 +16,6 @@ import (
 func CreateContextHandlerToHttpHandler(ctx context.Context) ContextHandlerToHandlerHOF {
 	return func(f ContextHandlerFunc) HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			fmt.Printf("context: %v\n", ctx)
-			fmt.Printf("w: %v\n", w)
-			fmt.Printf("r: %v\n", r)
-			fmt.Printf("f: %v\n", f)
 			f(ctx, w, r)
 		}
 	}
@@ -60,7 +56,8 @@ func TestCreateSignupEndpoint(t *testing.T) {
 		c.Convey("It should return a 200 response", func() {
 			r.ServeHTTP(record, req)
 			c.So(record.Code, c.ShouldEqual, 200)
-			c.So(fmt.Sprint(record.Body), c.ShouldEqual, "banana: dong")
+			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
+`)
 		})
 	})
 }

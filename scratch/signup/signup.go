@@ -52,27 +52,21 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	params := mux.Vars(req)
 	w.Header().Set("Content-Type", "application/json")
 	var email Email
-	fmt.Println("got here!")
 	email.Address = params["email"]
-	fmt.Println("got here 3!")
 	code := randToken()
-	fmt.Println("got here 4!")
 	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
 		email.Success = false
 		email.Note = err.Error()
 		json.NewEncoder(w).Encode(email)
 		return
 	}
-	fmt.Println("got here 5!")
 	_, err := AddSignup(ctx, email.Address, code)
-	fmt.Println("got here 6!")
 	if err != nil {
 		email.Success = false
 		email.Note = err.Error()
 	} else {
 		email.Success = true
 	}
-	fmt.Println("got here 7!")
 	json.NewEncoder(w).Encode(email)
 }
 
