@@ -159,7 +159,7 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
 	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
-	appRouter.HandleFunc("/monkeys/{poop}", f(CreateSignupEndpoint)).Methods("GET")
+	appRouter.HandleFunc("/monkeys/{poop}", f(Monkeys)).Methods("GET")
 
 	return appRouter
 }
