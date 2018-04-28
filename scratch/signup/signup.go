@@ -4,13 +4,60 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"html/template"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
-	"regexp"
-	"time"
+
+	"google.golang.org/appengine"
+	"google.golang.org/appengine/mail"
 )
+
+func VerifyCodeEndpoint(w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	w.Header().Set("Content-Type", "application/json")
+	var verification Verification
+	_ = json.NewDecoder(req.Body).Decode(&verification)
+	verification.Code = params["code"]
+	err := MarkVerified(req, verification.Code)
+	verification.Success = true
+	verification.Note = ""
+	if err != nil {
+		verification.Success = false
+		verification.Note = err.Error()
+	}
+	json.NewEncoder(w).Encode(verification)
+}
+
+func CreateSignupEndpoint(w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	w.Header().Set("Content-Type", "application/json")
+	var email Email
+	_ = json.NewDecoder(req.Body).Decode(&email)
+	email.Address = params["email"]
+	code := randToken()
+	ctx := appengine.NewContext(req)
+	msg := &mail.Message{
+		Sender:  "[DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
+		To:      []string{email.Address},
+		Subject: "Your verification code",
+		Body:    fmt.Sprintf(emailBody, code),
+	}
+	if err := mail.Send(ctx, msg); err != nil {
+		email.Success = false
+		email.Note = err.Error()
+		json.NewEncoder(w).Encode(email)
+		return
+	}
+	_, err := AddSignup(req, email.Address, code)
+	if err != nil {
+		email.Success = false
+		email.Note = err.Error()
+	} else {
+		email.Success = true
+	}
+	json.NewEncoder(w).Encode(email)
+}
 
 type configuration struct {
 	SiteName     string
@@ -18,12 +65,37 @@ type configuration struct {
 	SMTPServer   string
 	SMTPUsername string
 	SMTPPassword string
+	ProjectID    string
+}
+
+type Email struct {
+	Address string `json:"address"`
+	Success bool   `json:"success"`
+	Note    string `json:"note"`
+}
+
+type Verification struct {
+	Code    string `json:"code"`
+	Success bool   `json:success"`
+	Note    string `json:note"`
 }
 
 var (
-	config    configuration
-	validPath = regexp.MustCompile("^/verify/([a-zA-Z0-9]+)$")
+	config configuration
 )
+
+const emailBody = `
+Code: %s
+
+Yours randomly,
+Bert.
+`
+
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
 func init() {
 	file, _ := os.Open("config.json")
@@ -32,70 +104,14 @@ func init() {
 	config = configuration{}
 	err := decoder.Decode(&config)
 	checkErr(err)
-	http.HandleFunc("/signup/", signupHandler)
-	http.HandleFunc("/signup_submit/", signupSubmitHandler)
-	http.HandleFunc("/verify/", verifyHandler)
-}
-
-type signup struct {
-	ID                int64
-	CreationTimestamp time.Time
-	Email             []byte
-	VerificationCode  string
-	IsVerified        []uint8
+	router := mux.NewRouter()
+	router.HandleFunc("/verify/{code}", VerifyCodeEndpoint).Methods("GET")
+	router.HandleFunc("/signup/{email}", CreateSignupEndpoint).Methods("POST")
+	http.Handle("/", router)
 }
 
 func randToken() string {
 	b := make([]byte, 4)
 	rand.Read(b)
 	return fmt.Sprintf("%x", b)
-}
-
-func signupHandler(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("signup.html")
-	s := &signup{}
-	t.Execute(w, s)
-}
-
-func signupSubmitHandler(w http.ResponseWriter, r *http.Request) {
-	email := r.FormValue("email")
-	s := &signup{
-		Email:            []byte(email),
-		VerificationCode: randToken(),
-		IsVerified:       []byte(sqlFalse)}
-	db, err := getSQLConnection()
-	checkErr(err)
-	defer db.Close()
-	_, err = s.insert(db)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	emailCode(string(s.Email), s.VerificationCode)
-	http.Redirect(w, r, "/signup/", http.StatusFound)
-}
-
-func verifyHandler(w http.ResponseWriter, r *http.Request) {
-	m := validPath.FindStringSubmatch(r.URL.Path)
-	if m == nil {
-		http.NotFound(w, r)
-		return
-	}
-	fmt.Println(m)
-	code := m[1]
-	db, err := getSQLConnection()
-	checkErr(err)
-	defer db.Close()
-	isValid, reason, maybeSignup := isValidVerificationCode(db, code)
-	if isValid {
-		err := maybeSignup.verify(db)
-		checkErr(err)
-		fmt.Fprint(w, reason)
-	} else {
-		fmt.Fprint(w, reason)
-	}
-}
-
-func main() {
-	log.Fatal(http.ListenAndServe(":8080", nil))
 }
