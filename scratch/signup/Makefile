@@ -1,3 +1,6 @@
 all:
-	go run *.go
-	chrome localhost:8080
+	go run signup.go db_operations.go
+test:
+	goapp test
+deploy:
+	goapp deploy -application seraphic-lock-199316 -version 0
