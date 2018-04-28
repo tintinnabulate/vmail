@@ -90,7 +90,8 @@ type Verification struct {
 }
 
 var (
-	config configuration
+	config    configuration
+	appRouter mux.Router
 )
 
 const emailBody = `
@@ -106,21 +107,29 @@ func checkErr(err error) {
 	}
 }
 
-func init() {
+func Initialise() {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
 	config = configuration{}
 	err := decoder.Decode(&config)
 	checkErr(err)
-	router := mux.NewRouter()
-	router.HandleFunc("/verify/{code}", VerifyCodeEndpoint).Methods("GET")
-	router.HandleFunc("/signup/{email}", CreateSignupEndpoint).Methods("POST")
-	http.Handle("/", router)
+	appRouter := mux.NewRouter()
+	appRouter.HandleFunc("/verify/{code}", VerifyCodeEndpoint).Methods("GET")
+	appRouter.HandleFunc("/signup/{email}", CreateSignupEndpoint).Methods("POST")
+	http.Handle("/", appRouter)
+}
+
+func init() {
+	Initialise()
 }
 
 func randToken() string {
 	b := make([]byte, 4)
 	rand.Read(b)
 	return fmt.Sprintf("%x", b)
+}
+
+func main() {
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
