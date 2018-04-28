@@ -14,6 +14,11 @@ import (
 	"google.golang.org/appengine/mail"
 )
 
+func Monkeys(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	fmt.Fprintf(w, "banana: %s", params["poop"])
+}
+
 func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	w.Header().Set("Content-Type", "application/json")
@@ -154,8 +159,9 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
 	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
+	appRouter.HandleFunc("/monkeys/{poop}", f(CreateSignupEndpoint)).Methods("GET")
 
-	return r
+	return appRouter
 }
 
 func init() {
