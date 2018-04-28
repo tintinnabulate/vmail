@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 
+	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/mail"
 )
@@ -29,6 +30,20 @@ func VerifyCodeEndpoint(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(verification)
 }
 
+func ComposeVerificationEmail(address, code string) *mail.Message {
+	return &mail.Message{
+		Sender:  "[DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
+		To:      []string{address},
+		Subject: "Your verification code",
+		Body:    fmt.Sprintf(emailBody, code),
+	}
+}
+
+func EmailVerificationCode(ctx context.Context, address, code string) error {
+	msg := ComposeVerificationEmail(address, code)
+	return mail.Send(ctx, msg)
+}
+
 func CreateSignupEndpoint(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	w.Header().Set("Content-Type", "application/json")
@@ -37,13 +52,7 @@ func CreateSignupEndpoint(w http.ResponseWriter, req *http.Request) {
 	email.Address = params["email"]
 	code := randToken()
 	ctx := appengine.NewContext(req)
-	msg := &mail.Message{
-		Sender:  "[DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
-		To:      []string{email.Address},
-		Subject: "Your verification code",
-		Body:    fmt.Sprintf(emailBody, code),
-	}
-	if err := mail.Send(ctx, msg); err != nil {
+	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
 		email.Success = false
 		email.Note = err.Error()
 		json.NewEncoder(w).Encode(email)
