@@ -82,3 +82,5 @@ func TestVerifySignupEndpoint(t *testing.T) {
 		})
 	})
 }
+
+// TODO test adding a valid signup and look for that code
