@@ -47,8 +47,8 @@ func CheckSignup(ctx context.Context, email string) (bool, error) {
 	return true, nil
 }
 
-// IsCodeFree checks the database to see if code is free to use
-func IsCodeFree(ctx context.Context, code string) (bool, error) {
+// IsCodeAvailable checks the database to see if code is free to use
+func IsCodeAvailable(ctx context.Context, code string) (bool, error) {
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
 	var signup Signup
 	if err := datastore.Get(ctx, key, &signup); err != nil {

@@ -132,7 +132,7 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	code := ""
 	for {
 		code = randToken()
-		codeIsOkayToUse, err := IsCodeFree(ctx, code)
+		codeIsOkayToUse, err := IsCodeAvailable(ctx, code)
 		checkErr(err)
 		if codeIsOkayToUse {
 			break
