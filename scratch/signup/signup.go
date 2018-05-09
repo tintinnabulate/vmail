@@ -53,7 +53,15 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	w.Header().Set("Content-Type", "application/json")
 	var email Email
 	email.Address = params["email"]
-	code := randToken()
+	code := ""
+	for {
+		code = randToken()
+		codeIsOkayToUse, err := IsCodeFree(ctx, code)
+		checkErr(err)
+		if codeIsOkayToUse {
+			break
+		}
+	}
 	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
 		email.Success = false
 		email.Note = err.Error()

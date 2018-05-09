@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -42,6 +41,21 @@ func CheckSignup(ctx context.Context, email string) (bool, error) {
 		return false, err
 	}
 	if len(signups) < 1 {
+		return false, nil
+	}
+	return true, nil
+}
+
+// IsCodeFree checks the database to see if code is free to use
+func IsCodeFree(ctx context.Context, code string) (bool, error) {
+	q := datastore.NewQuery("Signup").
+		Filter("code =", code)
+
+	var signups []Signup
+	if _, err := q.GetAll(ctx, &signups); err != nil {
+		return false, err
+	}
+	if len(signups) > 0 {
 		return false, nil
 	}
 	return true, nil
