@@ -119,6 +119,7 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
 	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
 	appRouter.HandleFunc("/signup/{email}", f(CheckSignupEndpoint)).Methods("GET")
+	appRouter.HandleFunc("/code/{email}", f(GetCodeEndpoint)).Methods("GET")
 
 	return appRouter
 }
@@ -189,4 +190,12 @@ func CheckSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.R
 		email.Success = true
 	}
 	json.NewEncoder(w).Encode(email)
+}
+
+func GetCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	var email Email
+	email.Address = params["email"]
+	code, _ := GetSignupCode(ctx, email.Address)
+	fmt.Fprintf(w, "%s", code)
 }
