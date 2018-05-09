@@ -4,7 +4,7 @@
 
 ### `POST /signup/{email_address}`
 
-1. Generate random verification code XXXXXX
+1. Generate random verification code `XXXXXX`
 2. Send email to `email_address` containing link to `/verify/XXXXXX`
 3. Store in database the row `creation_date: time.Now(), email: email_address, code: XXXXXX, is_verified: false`
 4. Response JSON: `{"Address": "email_address", "Success": true, "Note": ""}`
