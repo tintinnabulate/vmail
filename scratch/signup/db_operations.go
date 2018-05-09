@@ -48,17 +48,12 @@ func CheckSignup(ctx context.Context, email string) (bool, error) {
 
 // IsCodeFree checks the database to see if code is free to use
 func IsCodeFree(ctx context.Context, code string) (bool, error) {
-	q := datastore.NewQuery("Signup").
-		Filter("code =", code)
-
-	var signups []Signup
-	if _, err := q.GetAll(ctx, &signups); err != nil {
-		return false, err
+	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
+	var signup Signup
+	if err := datastore.Get(ctx, key, &signup); err != nil {
+		return true, nil
 	}
-	if len(signups) > 0 {
-		return false, nil
-	}
-	return true, nil
+	return false, nil
 }
 
 // MarkDone marks the signup as verified with the given ID.
@@ -81,4 +76,18 @@ func MarkVerified(ctx context.Context, code string) error {
 		}
 	}, nil)
 	return err
+}
+
+func GetSignupCode(ctx context.Context, email string) (string, error) {
+	q := datastore.NewQuery("Signup").
+		Filter("email =", email)
+
+	var signups []Signup
+	if _, err := q.GetAll(ctx, &signups); err != nil {
+		return "", err
+	}
+	if len(signups) < 1 {
+		return "", errors.New("Email not in database")
+	}
+	return signups[0].VerificationCode, nil
 }

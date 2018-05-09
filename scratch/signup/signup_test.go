@@ -42,7 +42,7 @@ func TestCreateSignupEndpoint(t *testing.T) {
 	})
 }
 
-func TestCreateAndCheckSignupEndpoint(t *testing.T) {
+func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 	LoadConfig()
 
 	ctx, _, _ := aetest.NewContext()
@@ -51,6 +51,7 @@ func TestCreateAndCheckSignupEndpoint(t *testing.T) {
 		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
 		record := httptest.NewRecorder()
 		record2 := httptest.NewRecorder()
+		record3 := httptest.NewRecorder()
 
 		req, err := http.NewRequest("POST", "/signup/lolz", nil)
 		c.So(err, c.ShouldBeNil)
@@ -62,14 +63,26 @@ func TestCreateAndCheckSignupEndpoint(t *testing.T) {
 			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
 `)
 
-			req2, err2 := http.NewRequest("GET", "/signup/lolz", nil)
+			code, err := GetSignupCode(ctx, "lolz")
+			checkErr(err)
+
+			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/verify/%s", code), nil)
 			c.So(err2, c.ShouldBeNil)
 
 			c.Convey("It should return a 200 response", func() {
 				r.ServeHTTP(record2, req2)
 				c.So(record2.Code, c.ShouldEqual, 200)
-				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, `{"address":"lolz","success":false,"note":""}
+				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf("{\"code\":\"%s\",\"success\":true,\"note\":\"\"}\n", code))
+
+				req3, err3 := http.NewRequest("GET", "/signup/lolz", nil)
+				c.So(err3, c.ShouldBeNil)
+
+				c.Convey("It should return a 200 response", func() {
+					r.ServeHTTP(record3, req3)
+					c.So(record3.Code, c.ShouldEqual, 200)
+					c.So(fmt.Sprint(record3.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
 `)
+				})
 			})
 		})
 
