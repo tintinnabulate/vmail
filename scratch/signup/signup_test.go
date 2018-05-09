@@ -72,6 +72,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 			c.Convey("It should return a 200 response", func() {
 				r.ServeHTTP(record2, req2)
 				c.So(record2.Code, c.ShouldEqual, 200)
+
 				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf("{\"code\":\"%s\",\"success\":true,\"note\":\"\"}\n", code))
 
 				req3, err3 := http.NewRequest("GET", "/signup/lolz", nil)

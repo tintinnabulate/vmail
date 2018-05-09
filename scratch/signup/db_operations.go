@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -79,15 +80,14 @@ func MarkVerified(ctx context.Context, code string) error {
 }
 
 func GetSignupCode(ctx context.Context, email string) (string, error) {
-	q := datastore.NewQuery("Signup").
-		Filter("email =", email)
+	q := datastore.NewQuery("Signup").Filter("email =", email)
 
 	var signups []Signup
 	if _, err := q.GetAll(ctx, &signups); err != nil {
 		return "", err
 	}
 	if len(signups) < 1 {
-		return "", errors.New("Email not in database")
+		return "", errors.New(fmt.Sprintf("Email not in database: %s", email))
 	}
 	return signups[0].VerificationCode, nil
 }
