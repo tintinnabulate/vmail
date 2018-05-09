@@ -70,6 +70,26 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	json.NewEncoder(w).Encode(email)
 }
 
+func CheckSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	w.Header().Set("Content-Type", "application/json")
+	var email Email
+	email.Address = params["email"]
+	exists, err := CheckSignup(ctx, email.Address)
+	if err != nil {
+		email.Success = false
+		email.Note = err.Error()
+		json.NewEncoder(w).Encode(email)
+		return
+	}
+	if !exists {
+		email.Success = false
+	} else {
+		email.Success = true
+	}
+	json.NewEncoder(w).Encode(email)
+}
+
 type configuration struct {
 	SiteName     string
 	SiteDomain   string
@@ -157,6 +177,7 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
 	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
+	appRouter.HandleFunc("/signup/{email}", f(CheckSignupEndpoint)).Methods("GET")
 	appRouter.HandleFunc("/monkeys/{poop}", f(Monkeys)).Methods("GET")
 
 	return appRouter

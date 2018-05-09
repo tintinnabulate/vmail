@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"google.golang.org/appengine/datastore"
@@ -28,6 +29,22 @@ func AddSignup(ctx context.Context, email, code string) (*datastore.Key, error) 
 		IsVerified:        false,
 	}
 	return datastore.Put(ctx, key, signup)
+}
+
+// CheckSignup checks the database to see if an email address exits and is verified
+func CheckSignup(ctx context.Context, email string) (bool, error) {
+	q := datastore.NewQuery("Signup").
+		Filter("email =", email).
+		Filter("verified =", true)
+
+	var signups []Signup
+	if _, err := q.GetAll(ctx, &signups); err != nil {
+		return false, err
+	}
+	if len(signups) < 1 {
+		return false, nil
+	}
+	return true, nil
 }
 
 // MarkDone marks the signup as verified with the given ID.
