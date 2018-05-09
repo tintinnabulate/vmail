@@ -24,7 +24,7 @@ type configuration struct {
 	ProjectID    string
 }
 
-// Email is holds our JSON response for GET and POST /signup/{email}
+// Email holds our JSON response for GET and POST /signup/{email}
 type Email struct {
 	Address string `json:"address"`
 	Success bool   `json:"success"`
