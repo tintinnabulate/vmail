@@ -63,24 +63,27 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
 `)
 
-			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/code/%s", "lolz"), nil)
+			code, _ := GetSignupCode(ctx, "lolz")
+
+			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/verify/%s", code), nil)
 			c.So(err2, c.ShouldBeNil)
 
 			c.Convey("Should be 200", func() {
 
 				r.ServeHTTP(record2, req2)
 				c.So(record2.Code, c.ShouldEqual, 200)
-				code := fmt.Sprint(record2.Body)
+				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf(`{"code":"%s","Success":true,"Note":""}
+`, code))
 
-				fmt.Printf("the freakin code: %s", code)
-
-				req3, err3 := http.NewRequest("GET", fmt.Sprintf("/verify/%s", code), nil)
+				req3, err3 := http.NewRequest("GET", "/signup/lolz", nil)
 				c.So(err3, c.ShouldBeNil)
 
 				c.Convey("Should be 200", func() {
-
 					r.ServeHTTP(record3, req3)
 					c.So(record3.Code, c.ShouldEqual, 200)
+					c.So(fmt.Sprint(record3.Body), c.ShouldEqual, `{"address":"lolz","success":false,"note":""}
+`)
+
 				})
 			})
 		})
