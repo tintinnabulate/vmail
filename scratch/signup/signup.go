@@ -48,7 +48,9 @@ var (
 const verificationEmailBody = `
 Welcome to %s!
 
-To get started, please <a href="https://%s/verify/%s">click here</a> to confirm your email address:
+To get started, please click below to confirm your email address:
+
+https://%s/verify/%s
 
 Best wishes,
 %s Committee.
