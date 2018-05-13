@@ -1,3 +1,14 @@
+/*
+	Implementation Note:
+		All calls to `datastore.Put` should be followed by a `datastore.Get`.
+		This forces the `Put` to store immediately when run locally, which is
+		necessary for testing with `goapp test`.
+		See more info here: https://stackoverflow.com/a/25075074
+
+	Filename:
+		db_operations.go
+*/
+
 package main
 
 import (
@@ -10,6 +21,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// Signup is used to hold signup entries going into/coming out of the datastore
 type Signup struct {
 	CreationTimestamp time.Time `datastore:"created"`
 	Email             string    `datastore:"email"`
@@ -29,20 +41,15 @@ func AddSignup(ctx context.Context, email, code string) (*datastore.Key, error) 
 		IsVerified:        false,
 	}
 	k, err := datastore.Put(ctx, key, signup)
-	// Fix to make `go test` work.
-	// We have to do a datastore.Get so that the Appengine SDK
-	// sees a consistent view of the datastore.
-	// See more: https://stackoverflow.com/a/25075074
 	datastore.Get(ctx, k, &signup)
 	return k, err
 }
 
-// CheckSignup checks the database to see if an email address exits and is verified
-func CheckSignup(ctx context.Context, email string) (bool, error) {
+// IsSignupVerified checks the database to see if an email address exits and is verified.
+func IsSignupVerified(ctx context.Context, email string) (bool, error) {
 	q := datastore.NewQuery("Signup").
 		Filter("email =", email).
 		Filter("verified =", true)
-
 	var signups []Signup
 	if _, err := q.GetAll(ctx, &signups); err != nil {
 		return false, err
@@ -53,7 +60,7 @@ func CheckSignup(ctx context.Context, email string) (bool, error) {
 	return true, nil
 }
 
-// IsCodeAvailable checks the database to see if code is free to use
+// IsCodeAvailable checks the database to see if code is free to use.
 func IsCodeAvailable(ctx context.Context, code string) (bool, error) {
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
 	var signup Signup
@@ -68,7 +75,6 @@ func MarkVerified(ctx context.Context, code string) error {
 	// Create a key using the given integer ID.
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
 	var signup Signup
-
 	// In a transaction load each signup, set verified to true and store.
 	err := datastore.RunInTransaction(ctx, func(tx context.Context) error {
 		if err := datastore.Get(tx, key, &signup); err != nil {
@@ -82,15 +88,14 @@ func MarkVerified(ctx context.Context, code string) error {
 			return err
 		}
 	}, nil)
-
-	// Fix to make `go test` work.
 	datastore.Get(ctx, key, &signup)
 	return err
 }
 
+// GetSignupCode gets the signup code matching the given email address.
+// This should only be called during testing.
 func GetSignupCode(ctx context.Context, email string) (string, error) {
 	q := datastore.NewQuery("Signup").Filter("email =", email)
-
 	var signups []Signup
 	if _, err := q.GetAll(ctx, &signups); err != nil {
 		return "", err

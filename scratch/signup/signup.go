@@ -1,18 +1,104 @@
+/*
+	Implementation Note:
+		None.
+	Filename:
+		signup.go
+*/
+
 package main
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
 
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/mail"
 )
+
+// CreateHandler creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFunc's.
+func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
+	appRouter := mux.NewRouter()
+	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
+	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
+	appRouter.HandleFunc("/signup/{email}", f(IsSignupVerifiedEndpoint)).Methods("GET")
+
+	return appRouter
+}
+
+// CreateSignupEndpoint handles POST /signup/{email}
+func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	w.Header().Set("Content-Type", "application/json")
+	var email Email
+	email.Address = params["email"]
+	code := ""
+	// Loop until we get a code that is available
+	// TODO: handle the case where we run out of codes (or we loop forever!)
+	for {
+		code = RandToken()
+		codeIsOkayToUse, err := IsCodeAvailable(ctx, code)
+		CheckErr(err)
+		if codeIsOkayToUse {
+			break
+		}
+	}
+	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
+		email.Success = false
+		email.Note = err.Error()
+		json.NewEncoder(w).Encode(email)
+		return
+	}
+	_, err := AddSignup(ctx, email.Address, code)
+	if err != nil {
+		email.Success = false
+		email.Note = err.Error()
+	} else {
+		email.Success = true
+	}
+	json.NewEncoder(w).Encode(email)
+}
+
+// VerifyCodeEndpoint handles GET /verify/{code}
+func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	w.Header().Set("Content-Type", "application/json")
+	var verification Verification
+	verification.Code = params["code"]
+	err := MarkVerified(ctx, verification.Code)
+	verification.Success = true
+	verification.Note = ""
+	if err != nil {
+		verification.Success = false
+		verification.Note = err.Error()
+	}
+	json.NewEncoder(w).Encode(verification)
+}
+
+// IsSignupVerifiedEndpoint handles GET /signup/{email}
+func IsSignupVerifiedEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	w.Header().Set("Content-Type", "application/json")
+	var email Email
+	email.Address = params["email"]
+	exists, err := IsSignupVerified(ctx, email.Address)
+	if err != nil {
+		email.Success = false
+		email.Note = err.Error()
+		json.NewEncoder(w).Encode(email)
+		return
+	}
+	if !exists {
+		email.Success = false
+	} else {
+		email.Success = true
+	}
+	json.NewEncoder(w).Encode(email)
+}
 
 // configuration holds our app configuration settings
 type configuration struct {
@@ -56,13 +142,6 @@ Best wishes,
 %s Committee.
 `
 
-// checkErr is a utility function for killing the app on the event of a non-nil error
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 // LoadConfig loads the app configuration JSON into the `config` variable
 func LoadConfig() {
 	file, _ := os.Open("config.json")
@@ -70,14 +149,7 @@ func LoadConfig() {
 	decoder := json.NewDecoder(file)
 	config = configuration{}
 	err := decoder.Decode(&config)
-	checkErr(err)
-}
-
-// randToken generates a random token, for use in verification codes
-func randToken() string {
-	b := make([]byte, 6)
-	rand.Read(b)
-	return fmt.Sprintf("%x", b)
+	CheckErr(err)
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
@@ -117,82 +189,4 @@ func ContextHanderToHttpHandler(f ContextHandlerFunc) HandlerFunc {
 		ctx := appengine.NewContext(r)
 		f(ctx, w, r)
 	}
-}
-
-// CreateHandler creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFunc's.
-func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
-	appRouter := mux.NewRouter()
-	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
-	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
-	appRouter.HandleFunc("/signup/{email}", f(CheckSignupEndpoint)).Methods("GET")
-
-	return appRouter
-}
-
-// CreateSignupEndpoint handles POST /signup/{email}
-func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	w.Header().Set("Content-Type", "application/json")
-	var email Email
-	email.Address = params["email"]
-	code := ""
-	for {
-		code = randToken()
-		codeIsOkayToUse, err := IsCodeAvailable(ctx, code)
-		checkErr(err)
-		if codeIsOkayToUse {
-			break
-		}
-	}
-	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
-		email.Success = false
-		email.Note = err.Error()
-		json.NewEncoder(w).Encode(email)
-		return
-	}
-	_, err := AddSignup(ctx, email.Address, code)
-	if err != nil {
-		email.Success = false
-		email.Note = err.Error()
-	} else {
-		email.Success = true
-	}
-	json.NewEncoder(w).Encode(email)
-}
-
-// VerifyCodeEndpoint handles GET /verify/{code}
-func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	w.Header().Set("Content-Type", "application/json")
-	var verification Verification
-	verification.Code = params["code"]
-	err := MarkVerified(ctx, verification.Code)
-	verification.Success = true
-	verification.Note = ""
-	if err != nil {
-		verification.Success = false
-		verification.Note = err.Error()
-	}
-	json.NewEncoder(w).Encode(verification)
-}
-
-// CheckSignupEndpoint handles GET /signup/{email}
-func CheckSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	w.Header().Set("Content-Type", "application/json")
-	var email Email
-	email.Address = params["email"]
-	exists, err := CheckSignup(ctx, email.Address)
-	if err != nil {
-		email.Success = false
-		email.Note = err.Error()
-		json.NewEncoder(w).Encode(email)
-		return
-	}
-	if !exists {
-		email.Success = false
-	} else {
-		email.Success = true
-	}
-	json.NewEncoder(w).Encode(email)
 }
