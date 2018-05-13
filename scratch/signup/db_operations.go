@@ -28,7 +28,13 @@ func AddSignup(ctx context.Context, email, code string) (*datastore.Key, error) 
 		VerificationCode:  code,
 		IsVerified:        false,
 	}
-	return datastore.Put(ctx, key, signup)
+	k, err := datastore.Put(ctx, key, signup)
+	// Fix to make `go test` work.
+	// We have to do a datastore.Get so that the Appengine SDK
+	// sees a consistent view of the datastore.
+	// See more: https://stackoverflow.com/a/25075074
+	datastore.Get(ctx, k, &signup)
+	return k, err
 }
 
 // CheckSignup checks the database to see if an email address exits and is verified
