@@ -81,7 +81,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 				c.Convey("Should be 200", func() {
 					r.ServeHTTP(record3, req3)
 					c.So(record3.Code, c.ShouldEqual, 200)
-					c.So(fmt.Sprint(record3.Body), c.ShouldEqual, `{"address":"lolz","success":false,"note":""}
+					c.So(fmt.Sprint(record3.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
 `)
 
 				})

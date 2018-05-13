@@ -67,10 +67,10 @@ func IsCodeAvailable(ctx context.Context, code string) (bool, error) {
 func MarkVerified(ctx context.Context, code string) error {
 	// Create a key using the given integer ID.
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
+	var signup Signup
 
 	// In a transaction load each signup, set verified to true and store.
 	err := datastore.RunInTransaction(ctx, func(tx context.Context) error {
-		var signup Signup
 		if err := datastore.Get(tx, key, &signup); err != nil {
 			return errors.New("no such verification code")
 		}
@@ -82,6 +82,9 @@ func MarkVerified(ctx context.Context, code string) error {
 			return err
 		}
 	}, nil)
+
+	// Fix to make `go test` work.
+	datastore.Get(ctx, key, &signup)
 	return err
 }
 
