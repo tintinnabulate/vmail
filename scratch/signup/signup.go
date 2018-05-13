@@ -22,6 +22,8 @@ type configuration struct {
 	SMTPUsername string
 	SMTPPassword string
 	ProjectID    string
+	ProjectEmail string
+	ProjectURL   string
 }
 
 // Email holds our JSON response for GET and POST /signup/{email}
@@ -44,10 +46,12 @@ var (
 )
 
 const verificationEmailBody = `
-Code: %s
+Welcome to %s!
 
-Yours randomly,
-Bert.
+To get started, please <a href="https://%s/verify/%s">click here</a> to confirm your email address:
+
+Best wishes,
+%s Committee.
 `
 
 // checkErr is a utility function for killing the app on the event of a non-nil error
@@ -77,10 +81,10 @@ func randToken() string {
 // ComposeVerificationEmail builds the verification email, ready to be sent
 func ComposeVerificationEmail(address, code string) *mail.Message {
 	return &mail.Message{
-		Sender:  "[DONUT REPLY] Admin <donotreply@seraphic-lock-199316.appspotmail.com>",
+		Sender:  fmt.Sprintf("[DO NOT REPLY] Admin <%s>", config.ProjectEmail),
 		To:      []string{address},
-		Subject: "Your verification code",
-		Body:    fmt.Sprintf(verificationEmailBody, code),
+		Subject: fmt.Sprintf("[%s] Please confirm your account", config.SiteName),
+		Body:    fmt.Sprintf(verificationEmailBody, config.SiteName, config.ProjectURL, code, config.SiteName),
 	}
 }
 
