@@ -69,7 +69,7 @@ func LoadConfig() {
 
 // randToken generates a random token, for use in verification codes
 func randToken() string {
-	b := make([]byte, 4)
+	b := make([]byte, 6)
 	rand.Read(b)
 	return fmt.Sprintf("%x", b)
 }
