@@ -3,5 +3,8 @@
     "SMTPPassword": "mypassword",
     "SMTPServer": "smtp.mydomain.com",
     "SiteDomain": "mydomain.com",
-    "SiteName": "MyDomain"
+    "SiteName": "MyDomain",
+    "ProjectID": "blahblah",
+    "ProjectURL": "blahblah.appspot.com",
+    "ProjectEmail": "donotreply@blahblah.appspot.com"
 }
