@@ -16,7 +16,8 @@ import (
 )
 
 func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "hoi")
+	req.ParseForm()
+	fmt.Fprint(w, req.Form)
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
@@ -69,8 +70,8 @@ Our context.Context http handler
 type ContextHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request)
 
 /*
-  Higher order function for changing a HandlerFunc to a ContextHandlerFunc,
-  usually creating the context.Context along the way.
+Higher order function for changing a HandlerFunc to a ContextHandlerFunc,
+usually creating the context.Context along the way.
 */
 type ContextHandlerToHandlerHOF func(f ContextHandlerFunc) HandlerFunc
 
@@ -98,6 +99,9 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 func init() {
 	LoadConfig()
 	router := CreateHandler(ContextHanderToHttpHandler)
-	csrfProtectedRouter := csrf.Protect([]byte(config.CSRF_Key))(router)
+	// Dev:
+	csrfProtectedRouter := csrf.Protect([]byte(config.CSRF_Key), csrf.Secure(false))(router)
+	// Live:
+	//csrfProtectedRouter := csrf.Protect([]byte(config.CSRF_Key))(router)
 	http.Handle("/", csrfProtectedRouter)
 }
