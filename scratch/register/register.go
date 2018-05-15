@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 
 	"golang.org/x/net/context"
@@ -18,7 +20,12 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "hoi")
+	// signup_form.tmpl just needs a {{ .csrfField }} template tag for
+	// csrf.TemplateField to inject the CSRF token into. Easy!
+	t, _ := template.ParseFiles("signup_form.tmpl")
+	t.ExecuteTemplate(w, "signup_form.tmpl", map[string]interface{}{
+		csrf.TemplateTag: csrf.TemplateField(req),
+	})
 }
 
 type configuration struct {
@@ -28,6 +35,7 @@ type configuration struct {
 	SMTPUsername string
 	SMTPPassword string
 	ProjectID    string
+	CSRF_Key     string
 }
 
 var (
@@ -89,5 +97,5 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 
 func init() {
 	LoadConfig()
-	http.Handle("/", CreateHandler(ContextHanderToHttpHandler))
+	http.Handle("/", csrf.Protect([]byte(config.CSRF_Key))(CreateHandler(ContextHanderToHttpHandler)))
 }
