@@ -99,6 +99,7 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 func init() {
 	LoadConfig()
 	router := CreateHandler(ContextHanderToHttpHandler)
+	// TODO: comment out Dev and uncomment Live
 	// Dev:
 	csrfProtectedRouter := csrf.Protect([]byte(config.CSRF_Key), csrf.Secure(false))(router)
 	// Live:
