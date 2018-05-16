@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"os"
-	"reflect"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/csrf"
@@ -16,7 +13,6 @@ import (
 	"github.com/gorilla/schema"
 
 	"golang.org/x/net/context"
-	"google.golang.org/appengine"
 )
 
 // Maybe you want to use github.com/gorilla/schema
@@ -42,16 +38,16 @@ type Registration struct {
 
 func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	err := req.ParseForm()
-	checkErr(err)
+	CheckErr(err)
 	var registration Registration
 	err = schemaDecoder.Decode(&registration, req.PostForm)
-	checkErr(err)
+	CheckErr(err)
 	fmt.Fprint(w, registration)
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	t, err := template.New("signup_form.tmpl").Funcs(funcMap).ParseFiles("signup_form.tmpl")
-	checkErr(err)
+	CheckErr(err)
 	t.ExecuteTemplate(w,
 		"signup_form.tmpl",
 		map[string]interface{}{
@@ -81,47 +77,7 @@ var (
 	funcMap       = template.FuncMap{"inc": func(i int) int { return i + 1 }}
 )
 
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// TODO: this will need adapting to whatever format we request for Sobriety_Date and Birth_Date
-func timeConverter(value string) reflect.Value {
-	tstamp, _ := strconv.ParseInt(value, 10, 64)
-	return reflect.ValueOf(time.Unix(tstamp, 0))
-}
-
-/*
-Standard http handler
-*/
-type HandlerFunc func(w http.ResponseWriter, r *http.Request)
-
-/*
-Our context.Context http handler
-*/
-type ContextHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request)
-
-/*
-Higher order function for changing a HandlerFunc to a ContextHandlerFunc,
-usually creating the context.Context along the way.
-*/
-type ContextHandlerToHandlerHOF func(f ContextHandlerFunc) HandlerFunc
-
-/*
-Creates a new Context and uses it when calling f
-*/
-func ContextHanderToHttpHandler(f ContextHandlerFunc) HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := appengine.NewContext(r)
-		f(ctx, w, r)
-	}
-}
-
-/*
-Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
-*/
+// Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
 func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
@@ -136,11 +92,11 @@ func Config_Init() {
 	decoder := json.NewDecoder(file)
 	config = configuration{}
 	err := decoder.Decode(&config)
-	checkErr(err)
+	CheckErr(err)
 }
 
 func SchemaDecoder_Init() {
-	schemaDecoder.RegisterConverter(time.Time{}, timeConverter)
+	schemaDecoder.RegisterConverter(time.Time{}, TimeConverter)
 	schemaDecoder.IgnoreUnknownKeys(true)
 }
 
