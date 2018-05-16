@@ -41,10 +41,11 @@ func TestPostRegistrationHandler(t *testing.T) {
 	})
 }
 
+/*
 func TestGetRegistrationHandler(t *testing.T) {
 	c.Convey("If you do not sign up", t, func() {
 
-		c.Convey("then register", func() {
+		c.Convey("...then register", func() {
 
 			c.Convey("it should return 200 response and suggest /signup", nil)
 
@@ -54,15 +55,15 @@ func TestGetRegistrationHandler(t *testing.T) {
 
 	c.Convey("If you sign up first", t, func() {
 
-		c.Convey("but forget to verify", func() {
+		c.Convey("...but forget to verify", func() {
 
 			c.Convey("it should return 200 response and suggest /signup", nil)
 
 		})
 
-		c.Convey("and verify", func() {
+		c.Convey("...and verify", func() {
 
-			c.Convey("then register", func() {
+			c.Convey("...then register", func() {
 
 				c.Convey("it should return 200 response and succeed", nil)
 
@@ -73,3 +74,4 @@ func TestGetRegistrationHandler(t *testing.T) {
 	})
 
 }
+*/
