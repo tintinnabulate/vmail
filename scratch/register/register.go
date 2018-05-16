@@ -28,10 +28,10 @@ type Registration struct {
 	Phone_Number              string
 	Sobriety_Date             time.Time
 	Birth_Date                time.Time
-	Member_Of                 Fellowship
+	Member_Of                 []Fellowship
 	YPAA_Committee            string
-	Any_Special_Needs         SpecialNeeds
-	Any_Service_Opportunities ServiceOpportunities
+	Any_Special_Needs         []SpecialNeed
+	Any_Service_Opportunities []ServiceOpportunity
 	Comments                  string
 }
 
@@ -41,12 +41,13 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	// signup_form.tmpl just needs a {{ .csrfField }} template tag for
-	// csrf.TemplateField to inject the CSRF token into. Easy!
 	t, _ := template.ParseFiles("signup_form.tmpl")
 	t.ExecuteTemplate(w, "signup_form.tmpl", map[string]interface{}{
-		csrf.TemplateTag: csrf.TemplateField(req),
-		"Countries":      Countries,
+		"Countries":            Countries,
+		"Fellowships":          Fellowships,
+		"SpecialNeeds":         SpecialNeeds,
+		"ServiceOpportunities": ServiceOpportunities,
+		csrf.TemplateTag:       csrf.TemplateField(req),
 	})
 }
 

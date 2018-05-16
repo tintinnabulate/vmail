@@ -495,17 +495,35 @@ const (
 	Other
 )
 
-type SpecialNeeds int
+var Fellowships = []Fellowship{
+	AA,
+	AlAnon,
+	Alateen,
+	Other,
+}
+
+type SpecialNeed int
 
 const (
-	Deaf_or_Hard_of_Hearing SpecialNeeds = iota + 1
+	Deaf_or_Hard_of_Hearing SpecialNeed = iota + 1
 	Wheelchair_Access
 	Translation_Services
 )
 
-type ServiceOpportunities int
+var SpecialNeeds = []SpecialNeed{
+	Deaf_or_Hard_of_Hearing,
+	Wheelchair_Access,
+	Translation_Services,
+}
+
+type ServiceOpportunity int
 
 const (
-	Outreach ServiceOpportunities = iota + 1
+	Outreach ServiceOpportunity = iota + 1
 	Service
 )
+
+var ServiceOpportunities = []ServiceOpportunity{
+	Outreach,
+	Service,
+}

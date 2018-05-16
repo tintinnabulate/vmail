@@ -97,16 +97,12 @@
 						<div class="form-group">
 							<label for="member" class="col-sm-4 control-label">Member Of :</label>
 							<div class="col-sm-8">
-						<div class="checkbox">
-										<label><input type="checkbox" name="member[]" value="AA"> AA</label>
-									  </div><div class="checkbox">
-										<label><input type="checkbox" name="member[]" value="Al-Anon"> Al-Anon</label>
-									  </div><div class="checkbox">
-										<label><input type="checkbox" name="member[]" value="Alateen"> Alateen</label>
-									  </div><div class="checkbox">
-										<label><input type="checkbox" name="member[]" value="Other"> Other</label>
-									  </div>						    </div>
-						</div>
+								{{ range $i, $fellowship := $.Fellowships }}
+								<div class="checkbox">
+								<label><input type="checkbox" name="member" value="{{ $fellowship }}">{{ $fellowship }}</label>
+								</div>
+								{{ end }}
+						    </div>
 						<div class="form-group">
 							<label for="committee" class="col-sm-4 control-label">YPAA Committee :</label>
 							<div class="col-sm-8">
@@ -116,23 +112,22 @@
 						<div class="form-group">
 							<label for="specialNeed" class="col-sm-4 control-label">Special Needs :</label>
                             <div class="col-sm-8">
-						<div class="checkbox">
-											<label><input type="checkbox" name="needs[]" value="Deaf/Hard of Hearing"> Deaf/Hard of Hearing</label>
-										  </div><div class="checkbox">
-											<label><input type="checkbox" name="needs[]" value="Wheelchair Access"> Wheelchair Access</label>
-										  </div><div class="checkbox">
-											<label><input type="checkbox" name="needs[]" value="Translation Services"> Translation Services</label>
-										  </div>                        	</div>
-						</div>
+								{{ range $i, $specialneed := $.SpecialNeeds }}
+								<div class="checkbox">
+								<label><input type="checkbox" name="needs" value="{{ $specialneed }}">{{ $specialneed }}</label>
+								</div>
+								{{ end }}
+					     	</div>
 						<div class="form-group">
 							<label for="service" class="col-sm-4 control-label"> Service Opportunities :</label>
                             <div class="col-sm-8">
-                        <div class="checkbox">
-											<label><input type="checkbox" name="opportunities[]" value="I want to help outreach the Conference"> I want to help outreach the Conference</label>
-										  </div><div class="checkbox">
-											<label><input type="checkbox" name="opportunities[]" value="I want to be of service at the Conference"> I want to be of service at the Conference</label>
-										  </div>							</div>
-						</div>
+								{{ range $i, $opportunity := $.ServiceOpportunities }}
+								<div class="checkbox">
+								<label><input type="checkbox" name="opportunities" value="{{ $opportunity }}">{{ $opportunity }}</label>
+								</div>
+								{{ end }}
+						   </div>
+					    </div>
                         <div class="form-group">
                         	<label for="comments" class="col-sm-4 control-label">Comments :</label>
 							<div class="col-sm-8">
@@ -141,7 +136,7 @@
                         </div>
                         <div class="form-group">
 							<div class="col-sm-12" style="text-align:right;">
-      {{ .csrfField }}
+                                {{ .csrfField }}
 								<input type="submit" value="Next Step ›" class="btn btn-primary">
                             </div>
                         </div>
