@@ -54,10 +54,10 @@ func PostSignupHandler(ctx context.Context, w http.ResponseWriter, req *http.Req
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	t, err := template.New("register_form.tmpl").Funcs(funcMap).ParseFiles("register_form.tmpl")
+	t, err := template.New("registration_form.tmpl").Funcs(funcMap).ParseFiles("registration_form.tmpl")
 	CheckErr(err)
 	t.ExecuteTemplate(w,
-		"register_form.tmpl",
+		"registration_form.tmpl",
 		map[string]interface{}{
 			"Countries":            Countries,
 			"Fellowships":          Fellowships,
@@ -77,7 +77,13 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	// TODO:
 	// 1. `resp, err := http.Get(fmt.Sprinf("signup_verifier.com/signup/%s", registration.Email_Address))`
 	// 2. `if resp.Body != "{'success':true}" { redirect("/signup") }
-	fmt.Fprint(w, registration)
+	client := urlfetch.Client(ctx)
+	resp, err := client.Get(fmt.Sprintf("%s/%s", config.SignupURL, registration.Email_Address))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, resp)
 }
 
 type Registration struct {
