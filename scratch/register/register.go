@@ -7,10 +7,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
@@ -22,6 +25,7 @@ type Registration struct {
 	Last_Name                 string
 	Email_Address             string
 	Password                  string
+	Conf_Password             string
 	The_Country               Country
 	Zip_or_Postal_Code        string
 	City                      string
@@ -37,8 +41,14 @@ type Registration struct {
 }
 
 func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	req.ParseForm()
-	fmt.Fprint(w, req.Form)
+	err := req.ParseForm()
+	checkErr(err)
+
+	var registration Registration
+
+	err = schemaDecoder.Decode(&registration, req.PostForm)
+	// checkErr(err)
+	fmt.Fprint(w, registration)
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
@@ -65,14 +75,20 @@ type configuration struct {
 }
 
 var (
-	config    configuration
-	appRouter mux.Router
+	config        configuration
+	appRouter     mux.Router
+	schemaDecoder = schema.NewDecoder()
 )
 
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func timeConverter(value string) reflect.Value {
+	tstamp, _ := strconv.ParseInt(value, 10, 64)
+	return reflect.ValueOf(time.Unix(tstamp, 0))
 }
 
 func LoadConfig() {
@@ -82,6 +98,7 @@ func LoadConfig() {
 	config = configuration{}
 	err := decoder.Decode(&config)
 	checkErr(err)
+	schemaDecoder.RegisterConverter(time.Time{}, timeConverter)
 }
 
 /*

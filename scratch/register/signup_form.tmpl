@@ -5,108 +5,108 @@
   <body>
     <form id="register" action="/register" method="post">
       <div class="form-group">
-        <label for="firstname" class="col-sm-4 control-label">First Name * :</label>
+        <label for="First_Name" class="col-sm-4 control-label">First Name * :</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control required" id="firstname" name="firstname" value="">
+          <input type="text" class="form-control required" id="First_Name" name="First_Name" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="lastname" class="col-sm-4 control-label">Last Name * :</label>
+        <label for="Last_Name" class="col-sm-4 control-label">Last Name * :</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control required" id="lastname" name="lastname" value="">
+          <input type="text" class="form-control required" id="Last_Name" name="Last_Name" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="email" class="col-sm-4 control-label">Email Address * :</label>
+        <label for="Email_Address" class="col-sm-4 control-label">Email Address * :</label>
         <div class="col-sm-8">
-          <input type="email" class="form-control required" id="email" name="email" value="">
+          <input type="Email_Address" class="form-control required" id="Email_Address" name="Email_Address" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="password" class="col-sm-4 control-label">Password * :</label>
+        <label for="Password" class="col-sm-4 control-label">Password * :</label>
         <div class="col-sm-8">
-          <input type="password" class="form-control required" id="password" name="password">
+          <input type="Password" class="form-control required" id="Password" name="Password">
         </div>
       </div>
       <div class="form-group">
-        <label for="conf_password" class="col-sm-4 control-label">Confirm Password * :</label>
+        <label for="Conf_Password" class="col-sm-4 control-label">Confirm Password * :</label>
         <div class="col-sm-8">
-          <input type="password" class="form-control required" id="conf_password" name="conf_password">
+          <input type="Password" class="form-control required" id="Conf_Password" name="Conf_Password">
         </div>
       </div>
       <div class="form-group">
-        <label for="country" class="col-sm-4 control-label">Country :</label>
+        <label for="The_Country" class="col-sm-4 control-label">Country :</label>
         <div class="col-sm-4">
-          <select name="country" id="country" class="form-control medium valid">
+          <select name="The_Country" id="The_Country" class="form-control medium valid">
             {{ range $i, $country := $.Countries }}
-            <option value="{{ $country }}">{{ $country }}</option>
+            <option value="{{ $i }}">{{ $country }}</option>
             {{ end }}
           </select>
         </div>
       </div>
       <div class="form-group">
-        <label for="zip" class="col-sm-4 control-label">Zip/Postal Code * :</label>
+        <label for="Zip_or_Postal_Code" class="col-sm-4 control-label">Zip/Postal Code * :</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control required" id="zip" name="zip" value="">
+          <input type="text" class="form-control required" id="Zip_or_Postal_Code" name="Zip_or_Postal_Code" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="city" class="col-sm-4 control-label">City * :</label>
+        <label for="City" class="col-sm-4 control-label">City * :</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control required" name="city" id="city" value="">
+          <input type="text" class="form-control required" name="City" id="City" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="state" class="col-sm-4 control-label">State * :</label>
+        <label for="State" class="col-sm-4 control-label">State * :</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control required" name="state" id="state" value="">
+          <input type="text" class="form-control required" name="State" id="State" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="phone" class="col-sm-4 control-label">Phone Number :</label>
+        <label for="Phone_Number" class="col-sm-4 control-label">Phone Number :</label>
         <div class="col-sm-8">
-          <input type="text" class="form-control" id="phone" name="phone" value="">
+          <input type="text" class="form-control" id="Phone_Number" name="Phone_Number" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="sobriety_date" class="col-sm-4 control-label">
+        <label for="Sobriety_Date" class="col-sm-4 control-label">
         Sobriety Date :
         <span class="tiny">(mm/dd/yyyy)</span>
         </label>
         <div class="col-sm-4">
-          <input type="text" class="form-control datepickerMasked valid" id="sobriety_date" name="sobriety_date" value="">
+          <input type="text" class="form-control datepickerMasked valid" id="Sobriety_Date" name="Sobriety_Date" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="birth_date" class="col-sm-4 control-label">
+        <label for="Birth_Date" class="col-sm-4 control-label">
         Birth Date :
         <span class="tiny">(mm/dd/yyyy)</span>
         </label>
         <div class="col-sm-4">
-          <input type="text" class="form-control datepickerMasked2" id="birth_date" name="birth_date" value="">
+          <input type="text" class="form-control datepickerMasked2" id="Birth_Date" name="Birth_Date" value="">
         </div>
       </div>
       <div class="form-group">
-        <label for="member" class="col-sm-4 control-label">Member Of :</label>
+        <label for="Member_Of" class="col-sm-4 control-label">Member Of :</label>
         <div class="col-sm-8">
           {{ range $i, $fellowship := $.Fellowships }}
           <div class="checkbox">
-            <label><input type="checkbox" name="member" value="{{ $fellowship }}">{{ $fellowship }}</label>
+            <label><input type="checkbox" name="Member_Of" value="{{ $i }}">{{ $fellowship }}</label>
           </div>
           {{ end }}
         </div>
         <div class="form-group">
-          <label for="committee" class="col-sm-4 control-label">YPAA Committee :</label>
+          <label for="YPAA_Committee" class="col-sm-4 control-label">YPAA Committee :</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="committee" name="committee" value="">
+            <input type="text" class="form-control" id="YPAA_Committee" name="YPAA_Committee" value="">
           </div>
         </div>
         <div class="form-group">
-          <label for="specialNeed" class="col-sm-4 control-label">Special Needs :</label>
+          <label for="Any_Special_Needs" class="col-sm-4 control-label">Special Needs :</label>
           <div class="col-sm-8">
             {{ range $i, $specialneed := $.SpecialNeeds }}
             <div class="checkbox">
-              <label><input type="checkbox" name="needs" value="{{ $specialneed }}">{{ $specialneed }}</label>
+              <label><input type="checkbox" name="needs" value="{{ $i }}">{{ $specialneed }}</label>
             </div>
             {{ end }}
           </div>
@@ -116,19 +116,19 @@
           <div class="col-sm-8">
             {{ range $i, $opportunity := $.ServiceOpportunities }}
             <div class="checkbox">
-              <label><input type="checkbox" name="opportunities" value="{{ $opportunity }}">{{ $opportunity }}</label>
+              <label><input type="checkbox" name="Any_Service_Opportunities" value="{{ $i }}">{{ $opportunity }}</label>
             </div>
             {{ end }}
           </div>
         </div>
         <div class="form-group">
-          <label for="comments" class="col-sm-4 control-label">Comments :</label>
+          <label for="Comments" class="col-sm-4 control-label">Comments :</label>
           <div class="col-sm-8">
-            <textarea name="comments" class="form-control" rows="3"></textarea>
+            <textarea name="Comments" class="form-control" rows="3"></textarea>
           </div>
         </div>
         <div class="form-group">
-          <div class="col-sm-12" style="text-align:right;">
+          <div class="col-sm-12">
             {{ .csrfField }}
             <input type="submit" value="Next Step ›" class="btn btn-primary">
           </div>
