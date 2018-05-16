@@ -6,4 +6,5 @@
     "SiteName":     "MyDomain",
     "CSRF_Key":     "my-random-32-bytes",
     "IsLiveSite":  	true
+	"SignupURL":    "my-signup-verifier.com/signup"
 }

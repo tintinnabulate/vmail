@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/schema"
 
 	"golang.org/x/net/context"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 // Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
@@ -20,8 +22,8 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/signup", f(GetSignupHandler)).Methods("GET")
 	appRouter.HandleFunc("/signup", f(PostSignupHandler)).Methods("POST")
-	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
 	appRouter.HandleFunc("/register", f(GetRegistrationHandler)).Methods("GET")
+	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
 
 	return appRouter
 }
@@ -42,20 +44,13 @@ func PostSignupHandler(ctx context.Context, w http.ResponseWriter, req *http.Req
 	CheckErr(err)
 	var signup Signup
 	err = schemaDecoder.Decode(&signup, req.PostForm)
-	fmt.Fprint(w, signup)
-}
-
-func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	err := req.ParseForm()
-	CheckErr(err)
-	var registration Registration
-	err = schemaDecoder.Decode(&registration, req.PostForm)
-	CheckErr(err)
-	// registration now holds our user
-	// TODO:
-	// 1. `resp, err := http.Get(fmt.Sprinf("signup_verifier.com/signup/%s", registration.Email_Address))`
-	// 2. `if resp.Body != "{'success':true}" { redirect("/signup") }
-	fmt.Fprint(w, registration)
+	client := urlfetch.Client(ctx)
+	resp, err := client.Post(fmt.Sprintf("%s/%s", config.SignupURL, signup.Email_Address), "", nil)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, "HTTP GET returned status %v", resp.Status)
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
@@ -70,6 +65,19 @@ func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *htt
 			"ServiceOpportunities": ServiceOpportunities,
 			csrf.TemplateTag:       csrf.TemplateField(req),
 		})
+}
+
+func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	err := req.ParseForm()
+	CheckErr(err)
+	var registration Registration
+	err = schemaDecoder.Decode(&registration, req.PostForm)
+	CheckErr(err)
+	// registration now holds our user
+	// TODO:
+	// 1. `resp, err := http.Get(fmt.Sprinf("signup_verifier.com/signup/%s", registration.Email_Address))`
+	// 2. `if resp.Body != "{'success':true}" { redirect("/signup") }
+	fmt.Fprint(w, registration)
 }
 
 type Registration struct {
@@ -105,6 +113,7 @@ type configuration struct {
 	ProjectID    string
 	CSRF_Key     string
 	IsLiveSite   bool
+	SignupURL    string
 }
 
 var (
