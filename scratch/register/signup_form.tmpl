@@ -39,7 +39,7 @@
         <div class="col-sm-4">
           <select name="The_Country" id="The_Country" class="form-control medium valid">
             {{ range $i, $country := $.Countries }}
-            <option value="{{ $i }}">{{ $country }}</option>
+            <option value="{{ inc $i }}">{{ $country }}</option>
             {{ end }}
           </select>
         </div>
@@ -91,7 +91,7 @@
         <div class="col-sm-8">
           {{ range $i, $fellowship := $.Fellowships }}
           <div class="checkbox">
-            <label><input type="checkbox" name="Member_Of" value="{{ $i }}">{{ $fellowship }}</label>
+            <label><input type="checkbox" name="Member_Of" value="{{ inc $i }}">{{ $fellowship }}</label>
           </div>
           {{ end }}
         </div>
@@ -106,7 +106,7 @@
           <div class="col-sm-8">
             {{ range $i, $specialneed := $.SpecialNeeds }}
             <div class="checkbox">
-              <label><input type="checkbox" name="Any_Special_Needs" value="{{ $i }}">{{ $specialneed }}</label>
+              <label><input type="checkbox" name="Any_Special_Needs" value="{{ inc $i }}">{{ $specialneed }}</label>
             </div>
             {{ end }}
           </div>
@@ -116,7 +116,7 @@
           <div class="col-sm-8">
             {{ range $i, $opportunity := $.ServiceOpportunities }}
             <div class="checkbox">
-              <label><input type="checkbox" name="Any_Service_Opportunities" value="{{ $i }}">{{ $opportunity }}</label>
+              <label><input type="checkbox" name="Any_Service_Opportunities" value="{{ inc $i }}">{{ $opportunity }}</label>
             </div>
             {{ end }}
           </div>

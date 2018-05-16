@@ -40,39 +40,19 @@ type Registration struct {
 	Comments                  string
 }
 
-// FIXME: this is a horrendous hack to make up for enums starting at 1 but loops starting at 0
-func amendPostForm(req *http.Request) {
-	x, _ := strconv.Atoi(req.PostForm["The_Country"][0])
-	req.PostForm["The_Country"][0] = fmt.Sprint(x + 1)
-	for i, el := range req.PostForm["Any_Special_Needs"] {
-		x, _ = strconv.Atoi(el)
-		req.PostForm["Any_Special_Needs"][i] = fmt.Sprint(x + 1)
-	}
-	for i, el := range req.PostForm["Any_Service_Opportunities"] {
-		x, _ = strconv.Atoi(el)
-		req.PostForm["Any_Service_Opportunities"][i] = fmt.Sprint(x + 1)
-	}
-	for i, el := range req.PostForm["Member_Of"] {
-		x, _ = strconv.Atoi(el)
-		req.PostForm["Member_Of"][i] = fmt.Sprint(x + 1)
-	}
-}
-
 func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	err := req.ParseForm()
 	checkErr(err)
 	var registration Registration
 
-	// FIXME
-	amendPostForm(req)
-
 	err = schemaDecoder.Decode(&registration, req.PostForm)
-	//checkErr(err) // TODO: schema can't handle gorilla CSRT token... how to handle?
+	//checkErr(err) // TODO: schema can't handle gorilla CSRF token... how to handle?
 	fmt.Fprint(w, registration)
 }
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	t, _ := template.ParseFiles("signup_form.tmpl")
+	t, err := template.New("signup_form.tmpl").Funcs(funcMap).ParseFiles("signup_form.tmpl")
+	checkErr(err)
 	t.ExecuteTemplate(w,
 		"signup_form.tmpl",
 		map[string]interface{}{
@@ -98,6 +78,7 @@ var (
 	config        configuration
 	appRouter     mux.Router
 	schemaDecoder = schema.NewDecoder()
+	funcMap       = template.FuncMap{"inc": func(i int) int { return i + 1 }}
 )
 
 func checkErr(err error) {
