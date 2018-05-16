@@ -76,7 +76,7 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	client := urlfetch.Client(ctx)
 	resp, err := client.Get(fmt.Sprintf("%s/%s", config.SignupURL, registration.Email_Address))
 	CheckErr(err)
-	json.NewDecoder(resp.Body).Decode(signup)
+	json.NewDecoder(resp.Body).Decode(&signup)
 	if signup.Success {
 		fmt.Fprint(w, "You may proceed")
 	} else {
