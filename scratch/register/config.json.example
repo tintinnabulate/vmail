@@ -3,6 +3,7 @@
     "SMTPPassword": "mypassword",
     "SMTPServer":   "smtp.mydomain.com",
     "SiteDomain":   "mydomain.com",
-    "SiteName":     "MyDomain"
-    "CSRF_Key":     "my-random-32-bytes"
+    "SiteName":     "MyDomain",
+    "CSRF_Key":     "my-random-32-bytes",
+    "IsLiveSite":  	true
 }

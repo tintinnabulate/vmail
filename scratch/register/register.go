@@ -44,9 +44,8 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	err := req.ParseForm()
 	checkErr(err)
 	var registration Registration
-
 	err = schemaDecoder.Decode(&registration, req.PostForm)
-	//checkErr(err) // TODO: schema can't handle gorilla CSRF token... how to handle?
+	checkErr(err)
 	fmt.Fprint(w, registration)
 }
 
@@ -72,6 +71,7 @@ type configuration struct {
 	SMTPPassword string
 	ProjectID    string
 	CSRF_Key     string
+	IsLiveSite   bool
 }
 
 var (
@@ -91,16 +91,6 @@ func checkErr(err error) {
 func timeConverter(value string) reflect.Value {
 	tstamp, _ := strconv.ParseInt(value, 10, 64)
 	return reflect.ValueOf(time.Unix(tstamp, 0))
-}
-
-func LoadConfig() {
-	file, _ := os.Open("config.json")
-	defer file.Close()
-	decoder := json.NewDecoder(file)
-	config = configuration{}
-	err := decoder.Decode(&config)
-	checkErr(err)
-	schemaDecoder.RegisterConverter(time.Time{}, timeConverter)
 }
 
 /*
@@ -140,13 +130,31 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	return appRouter
 }
 
-func init() {
-	LoadConfig()
+func Config_Init() {
+	file, _ := os.Open("config.json")
+	defer file.Close()
+	decoder := json.NewDecoder(file)
+	config = configuration{}
+	err := decoder.Decode(&config)
+	checkErr(err)
+}
+
+func SchemaDecoder_Init() {
+	schemaDecoder.RegisterConverter(time.Time{}, timeConverter)
+	schemaDecoder.IgnoreUnknownKeys(true)
+}
+
+func Router_Init() {
 	router := CreateHandler(ContextHanderToHttpHandler)
-	// TODO: comment out Dev and uncomment Live
-	// Dev:
-	csrfProtectedRouter := csrf.Protect([]byte(config.CSRF_Key), csrf.Secure(false))(router)
-	// Live:
-	//csrfProtectedRouter := csrf.Protect([]byte(config.CSRF_Key))(router)
+	csrfProtector := csrf.Protect(
+		[]byte(config.CSRF_Key),
+		csrf.Secure(config.IsLiveSite))
+	csrfProtectedRouter := csrfProtector(router)
 	http.Handle("/", csrfProtectedRouter)
+}
+
+func init() {
+	Config_Init()
+	SchemaDecoder_Init()
+	Router_Init()
 }
