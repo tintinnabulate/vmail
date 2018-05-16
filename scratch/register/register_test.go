@@ -42,21 +42,34 @@ func TestPostRegistrationHandler(t *testing.T) {
 }
 
 func TestGetRegistrationHandler(t *testing.T) {
-	LoadConfig()
+	c.Convey("If you do not sign up", t, func() {
 
-	ctx, _, _ := aetest.NewContext()
+		c.Convey("then register", func() {
 
-	c.Convey("When user visits the registration page", t, func() {
-		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
-		record := httptest.NewRecorder()
+			c.Convey("it should return 200 response and suggest /signup", nil)
 
-		req, err := http.NewRequest("GET", "/register", nil)
-		c.So(err, c.ShouldBeNil)
-
-		c.Convey("It should return a 200 response", func() {
-			r.ServeHTTP(record, req)
-			c.So(record.Code, c.ShouldEqual, 200)
-			c.So(fmt.Sprint(record.Body), c.ShouldEqual, "hoi")
 		})
+
 	})
+
+	c.Convey("If you sign up first", t, func() {
+
+		c.Convey("but forget to verify", func() {
+
+			c.Convey("it should return 200 response and suggest /signup", nil)
+
+		})
+
+		c.Convey("and verify", func() {
+
+			c.Convey("then register", func() {
+
+				c.Convey("it should return 200 response and succeed", nil)
+
+			})
+
+		})
+
+	})
+
 }
