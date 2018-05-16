@@ -16,6 +16,7 @@ import (
 	"google.golang.org/appengine"
 )
 
+// Maybe you want to use github.com/gorilla/schema
 type Registration struct {
 	First_Name                string
 	Last_Name                 string
@@ -42,13 +43,15 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 
 func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	t, _ := template.ParseFiles("signup_form.tmpl")
-	t.ExecuteTemplate(w, "signup_form.tmpl", map[string]interface{}{
-		"Countries":            Countries,
-		"Fellowships":          Fellowships,
-		"SpecialNeeds":         SpecialNeeds,
-		"ServiceOpportunities": ServiceOpportunities,
-		csrf.TemplateTag:       csrf.TemplateField(req),
-	})
+	t.ExecuteTemplate(w,
+		"signup_form.tmpl",
+		map[string]interface{}{
+			"Countries":            Countries,
+			"Fellowships":          Fellowships,
+			"SpecialNeeds":         SpecialNeeds,
+			"ServiceOpportunities": ServiceOpportunities,
+			csrf.TemplateTag:       csrf.TemplateField(req),
+		})
 }
 
 type configuration struct {
