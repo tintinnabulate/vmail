@@ -3,7 +3,7 @@ package main
 type Country int
 
 const (
-	United_States Country = iota
+	United_States Country = iota + 1
 	Canada
 	Afghanistan
 	Albania
@@ -489,7 +489,7 @@ var Countries = []Country{
 type Fellowship int
 
 const (
-	AA Fellowship = iota
+	AA Fellowship = iota + 1
 	AlAnon
 	Alateen
 	Other
@@ -505,7 +505,7 @@ var Fellowships = []Fellowship{
 type SpecialNeed int
 
 const (
-	Deaf_or_Hard_of_Hearing SpecialNeed = iota
+	Deaf_or_Hard_of_Hearing SpecialNeed = iota + 1
 	Wheelchair_Access
 	Translation_Services
 )
@@ -519,7 +519,7 @@ var SpecialNeeds = []SpecialNeed{
 type ServiceOpportunity int
 
 const (
-	Outreach ServiceOpportunity = iota
+	Outreach ServiceOpportunity = iota + 1
 	Service
 )
 

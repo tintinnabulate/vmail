@@ -47,7 +47,7 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	var registration Registration
 
 	err = schemaDecoder.Decode(&registration, req.PostForm)
-	// checkErr(err)
+	//checkErr(err) // TODO: schema can't handle gorilla CSRT token... how to handle?
 	fmt.Fprint(w, registration)
 }
 
