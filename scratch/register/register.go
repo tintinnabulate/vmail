@@ -15,7 +15,63 @@ import (
 	"golang.org/x/net/context"
 )
 
-// Maybe you want to use github.com/gorilla/schema
+// Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
+func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
+	appRouter := mux.NewRouter()
+	appRouter.HandleFunc("/signup", f(GetSignupHandler)).Methods("GET")
+	appRouter.HandleFunc("/signup", f(PostSignupHandler)).Methods("POST")
+	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
+	appRouter.HandleFunc("/register", f(GetRegistrationHandler)).Methods("GET")
+
+	return appRouter
+}
+
+func GetSignupHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	// TODO: we can load templates nicer than this - do it once, and globally
+	t, err := template.New("signup_form.tmpl").ParseFiles("signup_form.tmpl")
+	CheckErr(err)
+	t.ExecuteTemplate(w,
+		"signup_form.tmpl",
+		map[string]interface{}{
+			csrf.TemplateTag: csrf.TemplateField(req),
+		})
+}
+
+func PostSignupHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	err := req.ParseForm()
+	CheckErr(err)
+	var signup Signup
+	err = schemaDecoder.Decode(&signup, req.PostForm)
+	fmt.Fprint(w, signup)
+}
+
+func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	err := req.ParseForm()
+	CheckErr(err)
+	var registration Registration
+	err = schemaDecoder.Decode(&registration, req.PostForm)
+	CheckErr(err)
+	// registration now holds our user
+	// TODO:
+	// 1. `resp, err := http.Get(fmt.Sprinf("signup_verifier.com/signup/%s", registration.Email_Address))`
+	// 2. `if resp.Body != "{'success':true}" { redirect("/signup") }
+	fmt.Fprint(w, registration)
+}
+
+func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	t, err := template.New("register_form.tmpl").Funcs(funcMap).ParseFiles("register_form.tmpl")
+	CheckErr(err)
+	t.ExecuteTemplate(w,
+		"register_form.tmpl",
+		map[string]interface{}{
+			"Countries":            Countries,
+			"Fellowships":          Fellowships,
+			"SpecialNeeds":         SpecialNeeds,
+			"ServiceOpportunities": ServiceOpportunities,
+			csrf.TemplateTag:       csrf.TemplateField(req),
+		})
+}
+
 type Registration struct {
 	First_Name                string
 	Last_Name                 string
@@ -36,27 +92,8 @@ type Registration struct {
 	Comments                  string
 }
 
-func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	err := req.ParseForm()
-	CheckErr(err)
-	var registration Registration
-	err = schemaDecoder.Decode(&registration, req.PostForm)
-	CheckErr(err)
-	fmt.Fprint(w, registration)
-}
-
-func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	t, err := template.New("signup_form.tmpl").Funcs(funcMap).ParseFiles("signup_form.tmpl")
-	CheckErr(err)
-	t.ExecuteTemplate(w,
-		"signup_form.tmpl",
-		map[string]interface{}{
-			"Countries":            Countries,
-			"Fellowships":          Fellowships,
-			"SpecialNeeds":         SpecialNeeds,
-			"ServiceOpportunities": ServiceOpportunities,
-			csrf.TemplateTag:       csrf.TemplateField(req),
-		})
+type Signup struct {
+	Email_Address string
 }
 
 type configuration struct {
@@ -72,19 +109,9 @@ type configuration struct {
 
 var (
 	config        configuration
-	appRouter     mux.Router
 	schemaDecoder = schema.NewDecoder()
 	funcMap       = template.FuncMap{"inc": func(i int) int { return i + 1 }}
 )
-
-// Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
-func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
-	appRouter := mux.NewRouter()
-	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
-	appRouter.HandleFunc("/register", f(GetRegistrationHandler)).Methods("GET")
-
-	return appRouter
-}
 
 func Config_Init() {
 	file, _ := os.Open("config.json")
