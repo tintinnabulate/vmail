@@ -22,7 +22,7 @@ func CreateContextHandlerToHttpHandler(ctx context.Context) ContextHandlerToHand
 }
 
 func TestPostRegistrationHandler(t *testing.T) {
-	LoadConfig()
+	Config_Init()
 
 	ctx, _, _ := aetest.NewContext()
 
