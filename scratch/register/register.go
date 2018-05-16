@@ -46,6 +46,7 @@ func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *htt
 	t, _ := template.ParseFiles("signup_form.tmpl")
 	t.ExecuteTemplate(w, "signup_form.tmpl", map[string]interface{}{
 		csrf.TemplateTag: csrf.TemplateField(req),
+		"countries":      Countries,
 	})
 }
 

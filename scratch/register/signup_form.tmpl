@@ -38,7 +38,9 @@
                             <label for="country" class="col-sm-4 control-label">Country :</label>
                             <div class="col-sm-4">
                                 <select name="country" id="country" class="form-control medium valid">
-								<option value="United States">United States</option>
+								{{ range $i, $country := .countries }}
+								<option value="{{ .country }}">{{ .country }}</option>
+								{{end}}
 								</select>
                             </div>
                         </div>
