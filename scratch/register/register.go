@@ -17,7 +17,6 @@ import (
 	"google.golang.org/appengine/urlfetch"
 )
 
-// Creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFuncs.
 func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/signup", f(GetSignupHandler)).Methods("GET")
@@ -68,22 +67,21 @@ func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *htt
 }
 
 func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	var registration Registration
+	var signup Signup
 	err := req.ParseForm()
 	CheckErr(err)
-	var registration Registration
 	err = schemaDecoder.Decode(&registration, req.PostForm)
 	CheckErr(err)
-	// registration now holds our user
-	// TODO:
-	// 1. `resp, err := http.Get(fmt.Sprinf("signup_verifier.com/signup/%s", registration.Email_Address))`
-	// 2. `if resp.Body != "{'success':true}" { redirect("/signup") }
 	client := urlfetch.Client(ctx)
 	resp, err := client.Get(fmt.Sprintf("%s/%s", config.SignupURL, registration.Email_Address))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	CheckErr(err)
+	json.NewDecoder(resp.Body).Decode(signup)
+	if signup.success {
+		fmt.Fprint(w, "You may proceed")
+	} else {
+		fmt.Fprint(w, "I'm sorry, you need to sign up first. Go to /signup")
 	}
-	fmt.Fprint(w, resp)
 }
 
 type Registration struct {
@@ -107,7 +105,9 @@ type Registration struct {
 }
 
 type Signup struct {
-	Email_Address string
+	Email_Address string `json:"address"`
+	Success       bool   `json:"success"`
+	Note          string `json:"note"`
 }
 
 type configuration struct {
