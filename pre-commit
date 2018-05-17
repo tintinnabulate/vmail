@@ -1,4 +1,29 @@
 #!/bin/sh
+
+# build project
+#build_result=$(go build)
+#build_rc=$?
+#if [ $build_rc -ne 0 ] ; then
+#	echo "git pre-commit check failed: build failed."
+#	exit 1
+#fi
+
+# run tests
+failed_tests="$(go test | grep "FAIL:" | awk '{print $3}')"
+if test -n "$failed_tests" ; then
+  for failed in $failed_tests; do
+    echo "git pre-commit check failed: test failed: $failed"
+  done
+  exit 1
+fi
+
+# go lint
+ lint_results="$(golint)"
+ if test -n "$lint_results" ; then
+	echo -e "Lint: \n$lint_results"
+	exit 1
+fi
+
 # Copyright 2012 The Go Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
@@ -10,7 +35,7 @@
 #
 # This script does not handle file names that contain spaces.
 
-gofiles=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$')
+gofiles=$(git diff --cached --name-only --diff-filter=ACM | grep '.go$')
 [ -z "$gofiles" ] && exit 0
 
 unformatted=$(gofmt -l $gofiles)
@@ -20,8 +45,7 @@ unformatted=$(gofmt -l $gofiles)
 
 echo >&2 "Go files must be formatted with gofmt. Please run:"
 for fn in $unformatted; do
-    echo >&2 "  gofmt -w $PWD/$fn"
+	echo >&2 "  gofmt -w $PWD/$fn"
 done
 
 exit 1
-
