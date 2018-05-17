@@ -27,3 +27,17 @@
 ## Notes
 
 I found this incredibly useful in helping me design testable code using Google App Engine: https://www.compoundtheory.com/testing-go-http-handlers-in-google-app-engine-with-mux-and-higher-order-functions/
+
+## TODO
+
+* Require OAUTH2
+
+https://cloud.google.com/go/getting-started/authenticate-users
+
+https://medium.com/@hfogelberg/the-black-magic-of-oauth-in-golang-part-1-3cef05c28dde
+
+https://cloud.google.com/appengine/docs/standard/go/users/
+
+https://github.com/google/google-api-go-client/blob/master/GettingStarted.md
+
+Also see my starred repos
