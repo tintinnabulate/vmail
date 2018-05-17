@@ -23,6 +23,7 @@ func CheckErr(err error) {
 // RandToken generates a random token, for use in verification codes
 func RandToken() string {
 	b := make([]byte, 6)
-	rand.Read(b)
+	_, err := rand.Read(b)
+	CheckErr(err)
 	return fmt.Sprintf("%x", b)
 }

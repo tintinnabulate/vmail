@@ -41,7 +41,8 @@ func AddSignup(ctx context.Context, email, code string) (*datastore.Key, error) 
 		IsVerified:        false,
 	}
 	k, err := datastore.Put(ctx, key, signup)
-	datastore.Get(ctx, k, &signup)
+	err2 := datastore.Get(ctx, k, &signup)
+	CheckErr(err2)
 	return k, err
 }
 
@@ -87,7 +88,8 @@ func MarkVerified(ctx context.Context, code string) error {
 		_, err := datastore.Put(tx, key, &signup)
 		return err
 	}, nil)
-	datastore.Get(ctx, key, &signup)
+	err2 := datastore.Get(ctx, key, &signup)
+	CheckErr(err2)
 	return err
 }
 

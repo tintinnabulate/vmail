@@ -50,7 +50,8 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
 		email.Success = false
 		email.Note = err.Error()
-		json.NewEncoder(w).Encode(email)
+		err = json.NewEncoder(w).Encode(email)
+		CheckErr(err)
 		return
 	}
 	_, err := AddSignup(ctx, email.Address, code)
@@ -60,7 +61,8 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	} else {
 		email.Success = true
 	}
-	json.NewEncoder(w).Encode(email)
+	err = json.NewEncoder(w).Encode(email)
+	CheckErr(err)
 }
 
 // VerifyCodeEndpoint handles GET /verify/{code}
@@ -76,7 +78,8 @@ func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Re
 		verification.Success = false
 		verification.Note = err.Error()
 	}
-	json.NewEncoder(w).Encode(verification)
+	err = json.NewEncoder(w).Encode(verification)
+	CheckErr(err)
 }
 
 // IsSignupVerifiedEndpoint handles GET /signup/{email}
@@ -89,7 +92,8 @@ func IsSignupVerifiedEndpoint(ctx context.Context, w http.ResponseWriter, req *h
 	if err != nil {
 		email.Success = false
 		email.Note = err.Error()
-		json.NewEncoder(w).Encode(email)
+		err = json.NewEncoder(w).Encode(email)
+		CheckErr(err)
 		return
 	}
 	if !exists {
@@ -97,7 +101,8 @@ func IsSignupVerifiedEndpoint(ctx context.Context, w http.ResponseWriter, req *h
 	} else {
 		email.Success = true
 	}
-	json.NewEncoder(w).Encode(email)
+	err = json.NewEncoder(w).Encode(email)
+	CheckErr(err)
 }
 
 // configuration holds our app configuration settings
@@ -146,10 +151,11 @@ Best wishes,
 // LoadConfig loads the app configuration JSON into the `config` variable
 func LoadConfig() {
 	file, _ := os.Open("config.json")
-	defer file.Close()
 	decoder := json.NewDecoder(file)
 	config = configuration{}
 	err := decoder.Decode(&config)
+	CheckErr(err)
+	err = file.Close()
 	CheckErr(err)
 }
 
