@@ -13,14 +13,14 @@ import (
 	"log"
 )
 
-// checkErr is a utility function for killing the app on the event of a non-nil error
+// CheckErr is a utility function for killing the app on the event of a non-nil error
 func CheckErr(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-// randToken generates a random token, for use in verification codes
+// RandToken generates a random token, for use in verification codes
 func RandToken() string {
 	b := make([]byte, 6)
 	rand.Read(b)

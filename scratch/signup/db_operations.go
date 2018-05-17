@@ -70,7 +70,7 @@ func IsCodeAvailable(ctx context.Context, code string) (bool, error) {
 	return false, nil
 }
 
-// MarkDone marks the signup as verified with the given ID.
+// MarkVerified marks the signup as verified with the given ID.
 func MarkVerified(ctx context.Context, code string) error {
 	// Create a key using the given integer ID.
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
@@ -82,11 +82,10 @@ func MarkVerified(ctx context.Context, code string) error {
 		}
 		if signup.IsVerified {
 			return errors.New("signup already verified")
-		} else {
-			signup.IsVerified = true
-			_, err := datastore.Put(tx, key, &signup)
-			return err
 		}
+		signup.IsVerified = true
+		_, err := datastore.Put(tx, key, &signup)
+		return err
 	}, nil)
 	datastore.Get(ctx, key, &signup)
 	return err
@@ -101,7 +100,7 @@ func GetSignupCode(ctx context.Context, email string) (string, error) {
 		return "", err
 	}
 	if len(signups) < 1 {
-		return "", errors.New(fmt.Sprintf("Email not in database: %s", email))
+		return "", fmt.Errorf("Email not in database: %s", email)
 	}
 	return signups[0].VerificationCode, nil
 }

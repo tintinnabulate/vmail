@@ -13,7 +13,7 @@ import (
 	"google.golang.org/appengine/aetest"
 )
 
-func CreateContextHandlerToHttpHandler(ctx context.Context) ContextHandlerToHandlerHOF {
+func CreateContextHandlerToHTTPHandler(ctx context.Context) ContextHandlerToHandlerHOF {
 	return func(f ContextHandlerFunc) HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			f(ctx, w, r)
@@ -28,7 +28,7 @@ func TestCreateSignupEndpoint(t *testing.T) {
 	ctx, _, _ := aetest.NewContext()
 
 	c.Convey("When you want to do foo", t, func() {
-		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
+		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
 		record := httptest.NewRecorder()
 
 		req, err := http.NewRequest("POST", "/signup/lolz", nil)
@@ -50,7 +50,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 	ctx, _, _ := aetest.NewContext()
 
 	c.Convey("When creating a signup for email address 'lolz'", t, func() {
-		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
+		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
 		record := httptest.NewRecorder()  // records the 'create signup' response
 		record2 := httptest.NewRecorder() // records the 'verify signup' response
 		record3 := httptest.NewRecorder() // records the 'check signup is verified' repsonse
@@ -65,7 +65,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
 `)
 
-            // Look up code sent to 'lolz'
+			// Look up code sent to 'lolz'
 			code, _ := GetSignupCode(ctx, "lolz")
 
 			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/verify/%s", code), nil)
@@ -75,7 +75,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 
 				r.ServeHTTP(record2, req2)
 				c.So(record2.Code, c.ShouldEqual, 200)
-				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf(`{"code":"%s","Success":true,"Note":""}
+				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf(`{"code":"%s","success":true,"note":""}
 `, code))
 
 				req3, err3 := http.NewRequest("GET", "/signup/lolz", nil)
@@ -100,7 +100,7 @@ func TestVerifySignupEndpoint(t *testing.T) {
 	ctx, _, _ := aetest.NewContext()
 
 	c.Convey("When you try and verify a non-existent code", t, func() {
-		r := CreateHandler(CreateContextHandlerToHttpHandler(ctx))
+		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
 		record := httptest.NewRecorder()
 
 		req, err := http.NewRequest("GET", "/verify/lolz", nil)
@@ -109,7 +109,7 @@ func TestVerifySignupEndpoint(t *testing.T) {
 		c.Convey("It should return a 200 response, but fail", func() {
 			r.ServeHTTP(record, req)
 			c.So(record.Code, c.ShouldEqual, 200)
-			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"code":"lolz","Success":false,"Note":"no such verification code"}
+			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"code":"lolz","success":false,"note":"no such verification code"}
 `)
 		})
 	})
