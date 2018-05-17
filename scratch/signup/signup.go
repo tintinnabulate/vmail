@@ -138,6 +138,7 @@ To get started, please click below to confirm your email address:
 
 https://%s/verify/%s
 
+-- 
 Best wishes,
 %s Committee.
 `
