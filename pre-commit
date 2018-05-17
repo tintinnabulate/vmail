@@ -13,16 +13,6 @@
 gofiles=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$')
 [ -z "$gofiles" ] && exit 0
 
-unerrchecked=$(errcheck $gofiles)
-[ -z "$unerrchecked" ] && exit 0
-
-echo >&2 "Go files must have their errors handled. Please run errcheck"
-
-unvetted=$(go vet $gofiles)
-[ -z "$unvetted" ] && exit 0
-
-echo >&2 "Go files must be vetted. Please run go vet"
-
 unformatted=$(gofmt -l $gofiles)
 [ -z "$unformatted" ] && exit 0
 
