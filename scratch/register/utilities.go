@@ -34,7 +34,7 @@ type ContextHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http
 type ContextHandlerToHandlerHOF func(f ContextHandlerFunc) HandlerFunc
 
 // Creates a new Context and uses it when calling f
-func ContextHanderToHttpHandler(f ContextHandlerFunc) HandlerFunc {
+func ContextHandlerToHttpHandler(f ContextHandlerFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := appengine.NewContext(r)
 		f(ctx, w, r)

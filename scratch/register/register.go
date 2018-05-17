@@ -143,7 +143,7 @@ func SchemaDecoder_Init() {
 }
 
 func Router_Init() {
-	router := CreateHandler(ContextHanderToHttpHandler)
+	router := CreateHandler(ContextHandlerToHttpHandler)
 	csrfProtector := csrf.Protect(
 		[]byte(config.CSRF_Key),
 		csrf.Secure(config.IsLiveSite))
