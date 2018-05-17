@@ -122,8 +122,8 @@ type Email struct {
 // Verification holds our JSON response for GET /verify/{code}
 type Verification struct {
 	Code    string `json:"code"`
-	Success bool   `json:success"`
-	Note    string `json:note"`
+	Success bool   `json:"success"`
+	Note    string `json:"note"`
 }
 
 var (
