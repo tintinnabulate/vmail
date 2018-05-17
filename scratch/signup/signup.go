@@ -170,7 +170,7 @@ func EmailVerificationCode(ctx context.Context, address, code string) error {
 
 func init() {
 	LoadConfig()
-	http.Handle("/", CreateHandler(ContextHanderToHttpHandler))
+	http.Handle("/", CreateHandler(ContextHandlerToHttpHandler))
 }
 
 // HandlerFunc is our Standard http handler
@@ -183,8 +183,8 @@ type ContextHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http
 // for changing a HandlerFunc to a ContextHandlerFunc, usually creating the context.Context along the way.
 type ContextHandlerToHandlerHOF func(f ContextHandlerFunc) HandlerFunc
 
-// ContextHanderToHttpHandler Creates a new Context and uses it when calling f
-func ContextHanderToHttpHandler(f ContextHandlerFunc) HandlerFunc {
+// ContextHandlerToHttpHandler Creates a new Context and uses it when calling f
+func ContextHandlerToHttpHandler(f ContextHandlerFunc) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := appengine.NewContext(r)
 		f(ctx, w, r)
