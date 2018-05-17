@@ -41,7 +41,7 @@ func AddSignup(ctx context.Context, email, code string) (*datastore.Key, error) 
 		IsVerified:        false,
 	}
 	k, err := datastore.Put(ctx, key, signup)
-	err2 := datastore.Get(ctx, k, &signup)
+	err2 := datastore.Get(ctx, k, signup)
 	CheckErr(err2)
 	return k, err
 }
@@ -64,8 +64,8 @@ func IsSignupVerified(ctx context.Context, email string) (bool, error) {
 // IsCodeAvailable checks the database to see if code is free to use.
 func IsCodeAvailable(ctx context.Context, code string) (bool, error) {
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
-	var signup Signup
-	if err := datastore.Get(ctx, key, &signup); err != nil {
+	signup := new(Signup)
+	if err := datastore.Get(ctx, key, signup); err != nil {
 		return true, nil
 	}
 	return false, nil
@@ -75,21 +75,23 @@ func IsCodeAvailable(ctx context.Context, code string) (bool, error) {
 func MarkVerified(ctx context.Context, code string) error {
 	// Create a key using the given integer ID.
 	key := datastore.NewKey(ctx, "Signup", code, 0, nil)
-	var signup Signup
+	signup := new(Signup)
 	// In a transaction load each signup, set verified to true and store.
 	err := datastore.RunInTransaction(ctx, func(tx context.Context) error {
-		if err := datastore.Get(tx, key, &signup); err != nil {
+		if err := datastore.Get(tx, key, signup); err != nil {
 			return errors.New("no such verification code")
 		}
 		if signup.IsVerified {
 			return errors.New("signup already verified")
 		}
 		signup.IsVerified = true
-		_, err := datastore.Put(tx, key, &signup)
+		_, err := datastore.Put(tx, key, signup)
 		return err
 	}, nil)
-	err2 := datastore.Get(ctx, key, &signup)
-	CheckErr(err2)
+	if err == nil {
+		err2 := datastore.Get(ctx, key, signup)
+		CheckErr(err2)
+	}
 	return err
 }
 
