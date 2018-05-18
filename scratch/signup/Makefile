@@ -1,6 +1,6 @@
 all:
 	dev_appserver.py .
 test:
-	go test -v
+	go test -v .
 deploy:
 	goapp deploy -application seraphic-lock-199316 -version 0
