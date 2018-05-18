@@ -1,9 +1,6 @@
 /*
 	Implementation Note:
-		All calls to `datastore.Put` should be followed by a `datastore.Get`.
-		This forces the `Put` to store immediately when run locally, which is
-		necessary for testing with `goapp test`.
-		See more info here: https://stackoverflow.com/a/25075074
+		None.
 
 	Filename:
 		db_operations.go
