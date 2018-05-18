@@ -25,6 +25,7 @@ func getContext() (context.Context, aetest.Instance) {
 	inst, _ := aetest.NewInstance(
 		&aetest.Options{
 			StronglyConsistentDatastore: true,
+			// SuppressDevAppServerLog:     true,
 		})
 	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {
