@@ -1,5 +1,5 @@
 all:
-	goapp serve
+	dev_appserver.py .
 test:
 	go test -v
 deploy:
