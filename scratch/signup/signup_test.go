@@ -21,20 +21,25 @@ func CreateContextHandlerToHTTPHandler(ctx context.Context) ContextHandlerToHand
 	}
 }
 
-// TestCreateSignupEndpoint tests that we can create a signup
-func TestCreateSignupEndpoint(t *testing.T) {
-	LoadConfig()
-
+func getContext() (context.Context, aetest.Instance) {
 	inst, _ := aetest.NewInstance(
 		&aetest.Options{
 			StronglyConsistentDatastore: true,
 		})
-	defer inst.Close()
 	req, err := inst.NewRequest("GET", "/", nil)
 	if err != nil {
 		inst.Close()
 	}
 	ctx := appengine.NewContext(req)
+	return ctx, inst
+}
+
+// TestCreateSignupEndpoint tests that we can create a signup
+func TestCreateSignupEndpoint(t *testing.T) {
+	LoadConfig()
+
+	ctx, inst := getContext()
+	defer inst.Close()
 
 	c.Convey("When you want to do foo", t, func() {
 		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
@@ -56,16 +61,8 @@ func TestCreateSignupEndpoint(t *testing.T) {
 func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 	LoadConfig()
 
-	inst, _ := aetest.NewInstance(
-		&aetest.Options{
-			StronglyConsistentDatastore: true,
-		})
+	ctx, inst := getContext()
 	defer inst.Close()
-	req, err := inst.NewRequest("GET", "/", nil)
-	if err != nil {
-		inst.Close()
-	}
-	ctx := appengine.NewContext(req)
 
 	c.Convey("When creating a signup for email address 'lolz'", t, func() {
 		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
@@ -115,16 +112,8 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 func TestVerifySignupEndpoint(t *testing.T) {
 	LoadConfig()
 
-	inst, _ := aetest.NewInstance(
-		&aetest.Options{
-			StronglyConsistentDatastore: true,
-		})
+	ctx, inst := getContext()
 	defer inst.Close()
-	req, err := inst.NewRequest("GET", "/", nil)
-	if err != nil {
-		inst.Close()
-	}
-	ctx := appengine.NewContext(req)
 
 	c.Convey("When you try and verify a non-existent code", t, func() {
 		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
