@@ -15,3 +15,5 @@ Make sure that
 * `errcheck` is silent on all files (`go get -u github.com/kisielk/errcheck`)
 
 You could make these git pre-commit hooks...
+
+* This is pretty great: https://github.com/golang/go/wiki/CodeReviewComments
