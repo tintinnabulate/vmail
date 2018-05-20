@@ -139,7 +139,6 @@ type Registration struct {
 	YPAA_Committee            string
 	Any_Special_Needs         []SpecialNeed
 	Any_Service_Opportunities []ServiceOpportunity
-	Comments                  string
 }
 
 type Signup struct {
