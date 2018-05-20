@@ -38,10 +38,8 @@
       <div class="form-group">
         <label for="The_Country" class="col-sm-4 control-label">Country :</label>
         <div class="col-sm-4">
-          <select name="The_Country" id="The_Country" class="form-control medium valid">
-            {{ range $i, $country := $.Countries }}
-            <option value="{{ inc $i }}">{{ $country }}</option>
-            {{ end }}
+          <select name="The_Country" id="The_Country" class="form-control medium valid">{{ range $i, $country := $.Countries }}
+			<option value="{{ inc $i }}">{{ $country }}</option>{{ end }}
           </select>
         </div>
       </div>
@@ -89,12 +87,10 @@
       </div>
       <div class="form-group">
         <label for="Member_Of" class="col-sm-4 control-label">Member Of :</label>
-        <div class="col-sm-8">
-          {{ range $i, $fellowship := $.Fellowships }}
+        <div class="col-sm-8">{{ range $i, $fellowship := $.Fellowships }}
           <div class="checkbox">
             <label><input type="checkbox" name="Member_Of" value="{{ inc $i }}">{{ $fellowship }}</label>
-          </div>
-          {{ end }}
+          </div>{{ end }}
         </div>
         <div class="form-group">
           <label for="YPAA_Committee" class="col-sm-4 control-label">YPAA Committee :</label>
@@ -104,27 +100,23 @@
         </div>
         <div class="form-group">
           <label for="Any_Special_Needs" class="col-sm-4 control-label">Special Needs :</label>
-          <div class="col-sm-8">
-            {{ range $i, $specialneed := $.SpecialNeeds }}
+          <div class="col-sm-8">{{ range $i, $specialneed := $.SpecialNeeds }}
             <div class="checkbox">
               <label><input type="checkbox" name="Any_Special_Needs" value="{{ inc $i }}">{{ $specialneed }}</label>
-            </div>
-            {{ end }}
+            </div>{{ end }}
           </div>
         </div>
         <div class="form-group">
           <label for="service" class="col-sm-4 control-label"> Service Opportunities :</label>
-          <div class="col-sm-8">
-            {{ range $i, $opportunity := $.ServiceOpportunities }}
+          <div class="col-sm-8">{{ range $i, $opportunity := $.ServiceOpportunities }}
             <div class="checkbox">
               <label><input type="checkbox" name="Any_Service_Opportunities" value="{{ inc $i }}">{{ $opportunity }}</label>
-            </div>
-            {{ end }}
+            </div>{{ end }}
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-12">
-            {{ .csrfField }}
+		    {{ .csrfField }}
             <input type="submit" value="Next Step ›" class="btn btn-primary">
           </div>
         </div>
