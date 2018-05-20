@@ -85,6 +85,43 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	}
 }
 
+func GetRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	tmpl := templates.Lookup("stripe.tmpl")
+	tmpl.Execute(w,
+		map[string]interface{}{
+			"Key":            publishableKey,
+			csrf.TemplateTag: csrf.TemplateField(req),
+		})
+}
+
+func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	customerParams := &stripe.CustomerParams{Email: r.Form.Get("stripeEmail")}
+	customerParams.SetSource(r.Form.Get("stripeToken"))
+
+	httpClient := urlfetch.Client(ctx)
+	sc := client.New(stripe.Key, stripe.NewBackends(httpClient))
+
+	newCustomer, err := sc.Customers.New(customerParams)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	chargeParams := &stripe.ChargeParams{
+		Amount:   500,
+		Currency: "usd",
+		Desc:     "Sample Charge",
+		Customer: newCustomer.ID,
+	}
+	charge, err := sc.Charges.New(chargeParams)
+	if err != nil {
+		fmt.Fprintf(w, "Could not process payment: %v", err)
+	}
+	fmt.Fprintf(w, "Completed payment: %v", charge.ID)
+}
+
 type Registration struct {
 	First_Name                string
 	Last_Name                 string
@@ -160,44 +197,6 @@ func RouterInit() {
 func StripeInit() {
 	publishableKey = config.StripePublishableKey
 	stripe.Key = config.StripeSecretKey
-}
-
-func GetRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	tmpl := templates.Lookup("stripe.tmpl")
-	tmpl.Execute(w,
-		map[string]interface{}{
-			"Key":            publishableKey,
-			csrf.TemplateTag: csrf.TemplateField(req),
-		})
-}
-
-func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-
-	customerParams := &stripe.CustomerParams{Email: r.Form.Get("stripeEmail")}
-	customerParams.SetSource(r.Form.Get("stripeToken"))
-
-	httpClient := urlfetch.Client(ctx)
-	sc := client.New("sk_live_key", stripe.NewBackends(httpClient))
-
-	newCustomer, err := sc.Customers.New(customerParams)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	chargeParams := &stripe.ChargeParams{
-		Amount:   500,
-		Currency: "usd",
-		Desc:     "Sample Charge",
-		Customer: newCustomer.ID,
-	}
-	chargeParams.SetSource("stripeToken") // obtained with Stripe.js
-	charge, err := sc.Charges.New(chargeParams)
-	if err != nil {
-		fmt.Fprintf(w, "Could not process payment: %v", err)
-	}
-	fmt.Fprintf(w, "Completed payment: %v", charge.ID)
 }
 
 func init() {
