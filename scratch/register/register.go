@@ -129,14 +129,10 @@ type Registration struct {
 	Password                  string
 	Conf_Password             string
 	The_Country               Country
-	Zip_or_Postal_Code        string
 	City                      string
-	State                     string
-	Phone_Number              string
+	Zip_or_Postal_Code        string
 	Sobriety_Date             time.Time
-	Birth_Date                time.Time
 	Member_Of                 []Fellowship
-	YPAA_Committee            string
 	Any_Special_Needs         []SpecialNeed
 	Any_Service_Opportunities []ServiceOpportunity
 }
