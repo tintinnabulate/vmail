@@ -11,6 +11,9 @@ import (
 	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
+	"github.com/stripe/stripe-go"
+	"github.com/stripe/stripe-go/charge"
+	"github.com/stripe/stripe-go/customer"
 
 	"golang.org/x/net/context"
 
@@ -23,15 +26,14 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter.HandleFunc("/signup", f(PostSignupHandler)).Methods("POST")
 	appRouter.HandleFunc("/register", f(GetRegistrationHandler)).Methods("GET")
 	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
+	appRouter.HandleFunc("/charge", f(GetRegistrationPaymentHandler)).Methods("GET")
+	appRouter.HandleFunc("/charge", f(PostRegistrationPaymentHandler)).Methods("POST")
 
 	return appRouter
 }
 
 func GetSignupHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	// TODO: we can load templates nicer than this - do it once, and globally
-	t, err := template.New("signup_form.tmpl").ParseFiles("signup_form.tmpl")
-	CheckErr(err)
-	t.ExecuteTemplate(w,
+	templates.ExecuteTemplate(w,
 		"signup_form.tmpl",
 		map[string]interface{}{
 			csrf.TemplateTag: csrf.TemplateField(req),
@@ -111,24 +113,28 @@ type Signup struct {
 }
 
 type configuration struct {
-	SiteName     string
-	SiteDomain   string
-	SMTPServer   string
-	SMTPUsername string
-	SMTPPassword string
-	ProjectID    string
-	CSRF_Key     string
-	IsLiveSite   bool
-	SignupURL    string
+	SiteName             string
+	SiteDomain           string
+	SMTPServer           string
+	SMTPUsername         string
+	SMTPPassword         string
+	ProjectID            string
+	CSRF_Key             string
+	IsLiveSite           bool
+	SignupURL            string
+	StripePublishableKey string
+	StripeSecretKey      string
 }
 
 var (
-	config        configuration
-	schemaDecoder = schema.NewDecoder()
-	funcMap       = template.FuncMap{"inc": func(i int) int { return i + 1 }}
+	config         configuration
+	schemaDecoder  = schema.NewDecoder()
+	funcMap        = template.FuncMap{"inc": func(i int) int { return i + 1 }}
+	publishableKey string
+	templates      = template.Must(template.ParseGlob("views/*.tmpl"))
 )
 
-func Config_Init() {
+func ConfigInit() {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
@@ -137,12 +143,12 @@ func Config_Init() {
 	CheckErr(err)
 }
 
-func SchemaDecoder_Init() {
+func SchemaDecoderInit() {
 	schemaDecoder.RegisterConverter(time.Time{}, TimeConverter)
 	schemaDecoder.IgnoreUnknownKeys(true)
 }
 
-func Router_Init() {
+func RouterInit() {
 	// TODO: https://youtu.be/xyDkyFjzFVc?t=1308
 	router := CreateHandler(ContextHandlerToHttpHandler)
 	csrfProtector := csrf.Protect(
@@ -152,8 +158,51 @@ func Router_Init() {
 	http.Handle("/", csrfProtectedRouter)
 }
 
+func StripeInit() {
+	publishableKey = config.StripePublishableKey
+	stripe.Key = config.StripeSecretKey
+}
+
+func GetRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	tmpl := templates.Lookup("stripe.tmpl")
+	tmpl.Execute(w,
+		map[string]interface{}{
+			"Key":            publishableKey,
+			csrf.TemplateTag: csrf.TemplateField(req),
+		})
+}
+
+func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	customerParams := &stripe.CustomerParams{Email: r.Form.Get("stripeEmail")}
+	customerParams.SetSource(r.Form.Get("stripeToken"))
+
+	newCustomer, err := customer.New(customerParams)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	chargeParams := &stripe.ChargeParams{
+		Amount:   500,
+		Currency: "usd",
+		Desc:     "Sample Charge",
+		Customer: newCustomer.ID,
+	}
+
+	if _, err := charge.New(chargeParams); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Charge completed successfully!")
+}
+
 func init() {
-	Config_Init()
-	SchemaDecoder_Init()
-	Router_Init()
+	ConfigInit()
+	SchemaDecoderInit()
+	RouterInit()
+	StripeInit()
 }
