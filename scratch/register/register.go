@@ -12,8 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 	"github.com/stripe/stripe-go"
-	"github.com/stripe/stripe-go/charge"
-	"github.com/stripe/stripe-go/customer"
+	"github.com/stripe/stripe-go/client"
 
 	"golang.org/x/net/context"
 
@@ -178,8 +177,10 @@ func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, 
 	customerParams := &stripe.CustomerParams{Email: r.Form.Get("stripeEmail")}
 	customerParams.SetSource(r.Form.Get("stripeToken"))
 
-	newCustomer, err := customer.New(customerParams)
+	httpClient := urlfetch.Client(ctx)
+	sc := client.New("sk_live_key", stripe.NewBackends(httpClient))
 
+	newCustomer, err := sc.Customers.New(customerParams)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -191,13 +192,12 @@ func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, 
 		Desc:     "Sample Charge",
 		Customer: newCustomer.ID,
 	}
-
-	if _, err := charge.New(chargeParams); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	chargeParams.SetSource("stripeToken") // obtained with Stripe.js
+	charge, err := sc.Charges.New(chargeParams)
+	if err != nil {
+		fmt.Fprintf(w, "Could not process payment: %v", err)
 	}
-
-	fmt.Fprintf(w, "Charge completed successfully!")
+	fmt.Fprintf(w, "Completed payment: %v", charge.ID)
 }
 
 func init() {
