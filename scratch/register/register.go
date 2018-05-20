@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 	"github.com/stripe/stripe-go"
-	"github.com/stripe/stripe-go/client"
+	stripeClient "github.com/stripe/stripe-go/client"
 
 	"golang.org/x/net/context"
 
@@ -101,7 +101,7 @@ func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, 
 	customerParams.SetSource(r.Form.Get("stripeToken"))
 
 	httpClient := urlfetch.Client(ctx)
-	sc := client.New(stripe.Key, stripe.NewBackends(httpClient))
+	sc := stripeClient.New(stripe.Key, stripe.NewBackends(httpClient))
 
 	newCustomer, err := sc.Customers.New(customerParams)
 	if err != nil {
