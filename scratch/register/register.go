@@ -25,7 +25,6 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter.HandleFunc("/signup", f(PostSignupHandler)).Methods("POST")
 	appRouter.HandleFunc("/register", f(GetRegistrationHandler)).Methods("GET")
 	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
-	appRouter.HandleFunc("/charge", f(GetRegistrationPaymentHandler)).Methods("GET")
 	appRouter.HandleFunc("/charge", f(PostRegistrationPaymentHandler)).Methods("POST")
 
 	return appRouter
@@ -79,18 +78,19 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	CheckErr(err)
 	json.NewDecoder(resp.Body).Decode(&signup)
 	if signup.Success {
-		fmt.Fprint(w, "You may proceed %v", registration)
+		showPaymentForm(ctx, w, req, &registration)
 	} else {
 		fmt.Fprint(w, "I'm sorry, you need to sign up first. Go to /signup")
 	}
 }
 
-func GetRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Request, registration *Registration) {
 	tmpl := templates.Lookup("stripe.tmpl")
 	tmpl.Execute(w,
 		map[string]interface{}{
 			"Key":            publishableKey,
 			csrf.TemplateTag: csrf.TemplateField(req),
+			"Email":          registration.Email_Address,
 		})
 }
 
