@@ -79,7 +79,7 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	CheckErr(err)
 	json.NewDecoder(resp.Body).Decode(&signup)
 	if signup.Success {
-		fmt.Fprint(w, "You may proceed")
+		fmt.Fprint(w, "You may proceed %v", registration)
 	} else {
 		fmt.Fprint(w, "I'm sorry, you need to sign up first. Go to /signup")
 	}
@@ -123,18 +123,17 @@ func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, 
 }
 
 type Registration struct {
-	First_Name                string
-	Last_Name                 string
-	Email_Address             string
-	Password                  string
-	Conf_Password             string
-	The_Country               Country
-	City                      string
-	Zip_or_Postal_Code        string
-	Sobriety_Date             time.Time
-	Member_Of                 []Fellowship
-	Any_Special_Needs         []SpecialNeed
-	Any_Service_Opportunities []ServiceOpportunity
+	First_Name         string
+	Last_Name          string
+	Email_Address      string
+	Password           string
+	Conf_Password      string
+	The_Country        Country
+	City               string
+	Zip_or_Postal_Code string
+	Sobriety_Date      time.Time
+	Member_Of          []Fellowship
+	Any_Special_Needs  []SpecialNeed
 }
 
 type Signup struct {
