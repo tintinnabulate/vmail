@@ -137,7 +137,7 @@ func PostRegistrationFormPaymentHandler(ctx context.Context, w http.ResponseWrit
 		Stripe_Customer_ID: charge.Customer.ID}
 	_, err = AddUser(ctx, user)
 	CheckErr(err)
-	fmt.Fprintf(w, "Completed payment:", charge.ID)
+	fmt.Fprintf(w, "Completed payment! Well not really... this was a test :-P")
 }
 
 type Signup struct {
