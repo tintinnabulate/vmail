@@ -37,3 +37,9 @@ func AddUser(ctx context.Context, user *User) (*datastore.Key, error) {
 	k, err := datastore.Put(ctx, key, user)
 	return k, err
 }
+
+func CreateConvention(ctx context.Context, convention *Convention) (*datastore.Key, error) {
+	key := datastore.NewKey(ctx, "Convention", "", 0, nil)
+	k, err := datastore.Put(ctx, key, convention)
+	return k, err
+}

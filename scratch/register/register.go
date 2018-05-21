@@ -155,15 +155,15 @@ func GetNewConventionHandlerForm(ctx context.Context, w http.ResponseWriter, req
 }
 
 func PostNewConventionHandlerForm(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	t, err := template.New("registration_form.tmpl").Funcs(funcMap).ParseFiles("registration_form.tmpl")
+	var convention Convention
+	err := req.ParseForm()
 	CheckErr(err)
-	t.ExecuteTemplate(w,
-		"registration_form.tmpl",
-		map[string]interface{}{
-			"Countries":      Countries,
-			"Fellowships":    Fellowships,
-			csrf.TemplateTag: csrf.TemplateField(req),
-		})
+	err = schemaDecoder.Decode(&convention, req.PostForm)
+	CheckErr(err)
+	convention.Creation_Date = time.Now()
+	_, err = CreateConvention(ctx, &convention)
+	CheckErr(err)
+	fmt.Fprint(w, "Convention created")
 }
 
 type Signup struct {
