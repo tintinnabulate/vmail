@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type UserModel struct {
+type User struct {
 	User_ID            int // pk
 	Creation_Date      time.Time
 	First_Name         string
@@ -19,7 +19,7 @@ type UserModel struct {
 	Stripe_Customer_ID string
 }
 
-type RegistrationModel struct {
+type Registration struct {
 	Registration_ID  int // pk
 	User_ID          int // fk
 	Convention_ID    int // fk
@@ -27,7 +27,7 @@ type RegistrationModel struct {
 	Stripe_Charge_ID string
 }
 
-type ConventionModel struct {
+type Convention struct {
 	Convention_ID     int // pk
 	Creation_Date     time.Time
 	Year              int

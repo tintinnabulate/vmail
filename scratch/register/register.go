@@ -23,9 +23,9 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/signup", f(GetSignupHandler)).Methods("GET")
 	appRouter.HandleFunc("/signup", f(PostSignupHandler)).Methods("POST")
-	appRouter.HandleFunc("/register", f(GetRegistrationHandler)).Methods("GET")
-	appRouter.HandleFunc("/register", f(PostRegistrationHandler)).Methods("POST")
-	appRouter.HandleFunc("/charge", f(PostRegistrationPaymentHandler)).Methods("POST")
+	appRouter.HandleFunc("/register", f(GetRegistrationFormHandler)).Methods("GET")
+	appRouter.HandleFunc("/register", f(PostRegistrationFormHandler)).Methods("POST")
+	appRouter.HandleFunc("/charge", f(PostRegistrationFormPaymentHandler)).Methods("POST")
 
 	return appRouter
 }
@@ -52,7 +52,7 @@ func PostSignupHandler(ctx context.Context, w http.ResponseWriter, req *http.Req
 	fmt.Fprintf(w, "HTTP GET returned status %v", resp.Status)
 }
 
-func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+func GetRegistrationFormHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	t, err := template.New("registration_form.tmpl").Funcs(funcMap).ParseFiles("registration_form.tmpl")
 	CheckErr(err)
 	t.ExecuteTemplate(w,
@@ -64,8 +64,8 @@ func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *htt
 		})
 }
 
-func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	var registration Registration
+func PostRegistrationFormHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	var registration RegistrationForm
 	var signup Signup
 	err := req.ParseForm()
 	CheckErr(err)
@@ -82,7 +82,7 @@ func PostRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *ht
 	}
 }
 
-func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Request, registration *Registration) {
+func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Request, registration *RegistrationForm) {
 	tmpl := templates.Lookup("stripe.tmpl")
 	tmpl.Execute(w,
 		map[string]interface{}{
@@ -92,7 +92,7 @@ func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Reque
 		})
 }
 
-func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+func PostRegistrationFormPaymentHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	customerParams := &stripe.CustomerParams{Email: r.Form.Get("stripeEmail")}
@@ -120,7 +120,7 @@ func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, 
 	fmt.Fprintf(w, "Completed payment: %v", charge.ID)
 }
 
-type Registration struct {
+type RegistrationForm struct {
 	First_Name    string
 	Last_Name     string
 	Email_Address string
