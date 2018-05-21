@@ -45,6 +45,7 @@ type Convention struct {
 // Email_Address is primary key
 type RegistrationForm struct {
 	Email_Address string
+	Creation_Date time.Time
 	First_Name    string
 	Last_Name     string
 	Password      string

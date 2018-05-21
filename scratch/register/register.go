@@ -76,6 +76,7 @@ func PostRegistrationFormHandler(ctx context.Context, w http.ResponseWriter, req
 	CheckErr(err)
 	json.NewDecoder(resp.Body).Decode(&signup)
 	if signup.Success {
+		regform.Creation_Date = time.Now()
 		_, err := StashRegistrationForm(ctx, &regform)
 		CheckErr(err)
 		showPaymentForm(ctx, w, req, &regform)
