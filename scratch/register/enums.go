@@ -492,26 +492,10 @@ const (
 	AA Fellowship = iota + 1
 	AlAnon
 	Alateen
-	Other
 )
 
 var Fellowships = []Fellowship{
 	AA,
 	AlAnon,
 	Alateen,
-	Other,
-}
-
-type SpecialNeed int
-
-const (
-	Deaf_or_Hard_of_Hearing SpecialNeed = iota + 1
-	Wheelchair_Access
-	Translation_Services
-)
-
-var SpecialNeeds = []SpecialNeed{
-	Deaf_or_Hard_of_Hearing,
-	Wheelchair_Access,
-	Translation_Services,
 }

@@ -13,7 +13,7 @@
       <div class="py-5 text-center">
         <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
         <h2>Registration form</h2>
-        <p class="lead">Below is an example form built entirely with Bootstrap's form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+        <p class="lead">Lorem ipsum.</p>
       </div>
 
         <div class="col-md-8 mx-auto order-md-1">
@@ -45,83 +45,68 @@
               </div>
             </div>
 
-      <div class="mb-3">
-        <label for="Password" class="control-label">Password</label>
-          <input type="Password" class="form-control required" id="Password" name="Password">
-      </div>
-      <div class="mb-3">
-        <label for="Conf_Password" class="control-label">Confirm Password</label>
-          <input type="Password" class="form-control required" id="Conf_Password" name="Conf_Password">
-      </div>
+            <div class="mb-3">
+              <label for="Password" class="control-label">Password</label>
+                <input type="Password" class="form-control required" id="Password" name="Password">
+            </div>
+            <div class="mb-3">
+              <label for="Conf_Password" class="control-label">Confirm Password</label>
+                <input type="Password" class="form-control required" id="Conf_Password" name="Conf_Password">
+            </div>
 
-      <div class="row">
-        <div class="col-md-5 mb-3">
-          <label for="The_Country">Country</label>
-          <select name="The_Country" id="The_Country" class="custom-select d-block w-100 form-control medium valid">{{ range $i, $country := $.Countries }}
-            <option value="{{ inc $i }}">{{ $country }}</option>{{ end }}
-          </select>
-          <div class="invalid-feedback">
-            Please select a valid country.
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <label for="City">City</label>
-          <input type="text" class="form-control" id="City" name="City" placeholder="" required="">
-        </div>
-        <div class="col-md-3 mb-3">
-          <label for="Zip_or_Postal_Code">Zip or postal code</label>
-          <input type="text" class="form-control" id="Zip_or_Postal_Code" name="Zip_or_Postal_Code" placeholder="" required="">
-          <div class="invalid-feedback">
-            Zip code required.
-          </div>
-        </div>
-      </div>
+            <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="The_Country">Country</label>
+                <select name="The_Country" id="The_Country" class="custom-select d-block w-100 form-control medium valid">{{ range $i, $country := $.Countries }}
+                  <option value="{{ inc $i }}">{{ $country }}</option>{{ end }}
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid country.
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="City">City</label>
+                <input type="text" class="form-control" id="City" name="City" placeholder="" required="">
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="Zip_or_Postal_Code">Zip or postal code</label>
+                <input type="text" class="form-control" id="Zip_or_Postal_Code" name="Zip_or_Postal_Code" placeholder="" required="">
+                <div class="invalid-feedback">
+                  Zip code required.
+                </div>
+              </div>
+            </div>
 
-      <div class="mb-3">
-        <label for="Sobriety_Date" class="control-label">Sobriety Date <span class="text-muted">(yyyy/mm/dd)</span></label>
-          <input type="text" class="form-control datepickerMasked valid" id="Sobriety_Date" name="Sobriety_Date" value="">
-      </div>
+            <div class="mb-3">
+              <label for="Sobriety_Date" class="control-label">Sobriety Date <span class="text-muted">(yyyy/mm/dd)</span></label>
+                <input type="text" class="form-control datepickerMasked valid" id="Sobriety_Date" name="Sobriety_Date" value="">
+            </div>
 
-      {{ range $i, $fellowship := $.Fellowships }}
-       <div class="custom-control custom-checkbox">
-        <input type="checkbox" class="custom-control-input" id="Member_Of_{{ $fellowship }}" name="Member_Of" value="{{ inc $i }}">
-          <label class="custom-control-label" for="Member_Of_{{ $fellowship }}">I am a member of {{ $fellowship }}</label>
-      </div>{{ end }}
+            <div class="mb-3">
+            {{ range $i, $fellowship := $.Fellowships }}
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="Member_Of_{{ $fellowship }}" name="Member_Of" value="{{ inc $i }}">
+                  <label class="custom-control-label" for="Member_Of_{{ $fellowship }}">I am a member of {{ $fellowship }}</label>
+              </div>{{ end }}
+            </div>
 
-      <hr class="mb-4">
-
-        {{ range $i, $specialneed := $.SpecialNeeds }}
-        <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="Special_Need_{{ $specialneed }}" name="Any_Special_Needs" value="{{ inc $i }}">
-          <label class="custom-control-label" for="Special_Need_{{ $specialneed }}">Special needs: {{ $specialneed }}</label>
-        </div>{{ end }}
-
-          <hr class="mb-4">
-
-          <h4 class="mb-3">Payment</h4>
-
-          <hr class="mb-4">
-          <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-        </form>
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+          </form>
         </div>
       </div>
 
       <footer class="my-5 pt-5 text-muted text-center text-small">
         <p class="mb-1">&copy; 2017-2018 Company Name</p>
-        <ul class="list-inline">
-          <li class="list-inline-item"><a href="#">Privacy</a></li>
-          <li class="list-inline-item"><a href="#">Terms</a></li>
-          <li class="list-inline-item"><a href="#">Support</a></li>
-        </ul>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+            <li class="list-inline-item"><a href="#">Support</a></li>
+          </ul>
       </footer>
-    </div>
-  </body>
-</html>
 
-      </div>
-    </form>
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
+	  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    </body>
 </html>

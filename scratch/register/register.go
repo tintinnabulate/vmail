@@ -58,10 +58,9 @@ func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *htt
 	t.ExecuteTemplate(w,
 		"registration_form.tmpl",
 		map[string]interface{}{
-			"Countries":            Countries,
-			"Fellowships":          Fellowships,
-			"SpecialNeeds":         SpecialNeeds,
-			csrf.TemplateTag:       csrf.TemplateField(req),
+			"Countries":      Countries,
+			"Fellowships":    Fellowships,
+			csrf.TemplateTag: csrf.TemplateField(req),
 		})
 }
 
@@ -132,7 +131,6 @@ type Registration struct {
 	Zip_or_Postal_Code string
 	Sobriety_Date      time.Time
 	Member_Of          []Fellowship
-	Any_Special_Needs  []SpecialNeed
 }
 
 type Signup struct {

@@ -4,9 +4,9 @@ package main
 
 import "strconv"
 
-const _Fellowship_name = "AAAlAnonAlateenOther"
+const _Fellowship_name = "AAAlAnonAlateen"
 
-var _Fellowship_index = [...]uint8{0, 2, 8, 15, 20}
+var _Fellowship_index = [...]uint8{0, 2, 8, 15}
 
 func (i Fellowship) String() string {
 	i -= 1
