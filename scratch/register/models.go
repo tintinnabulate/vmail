@@ -5,14 +5,14 @@ import (
 )
 
 type User struct {
-	User_ID            int // pk
+	User_ID            int64 // pk
 	Creation_Date      time.Time
 	First_Name         string
 	Last_Name          string
 	Email_Address      string
 	Password           string
 	Conf_Password      string
-	The_CountryType    CountryType
+	Country            CountryType
 	City               string
 	Sobriety_Date      time.Time
 	Member_Of          []Fellowship
@@ -20,18 +20,18 @@ type User struct {
 }
 
 type Registration struct {
-	Registration_ID  int // pk
-	User_ID          int // fk
-	Convention_ID    int // fk
+	Registration_ID  int64 // pk
+	User_ID          int64 // fk
+	Convention_ID    int64 // fk
 	Creation_Date    time.Time
 	Stripe_Charge_ID string
 }
 
 type Convention struct {
-	Convention_ID     int // pk
+	Convention_ID     int64 // pk
 	Creation_Date     time.Time
 	Year              int
-	The_CountryType   CountryType
+	Country           CountryType
 	Cost              int
 	Currency_Code     string
 	Start_Date        time.Time
@@ -40,4 +40,17 @@ type Convention struct {
 	Hotel_Is_Venue    bool
 	Venue             string
 	Stripe_Product_ID string
+}
+
+type RegistrationForm struct {
+	id            int64 // pk
+	First_Name    string
+	Last_Name     string
+	Email_Address string
+	Password      string
+	Conf_Password string
+	Country       CountryType
+	City          string
+	Sobriety_Date time.Time
+	Member_Of     []Fellowship
 }

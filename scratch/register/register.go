@@ -76,6 +76,8 @@ func PostRegistrationFormHandler(ctx context.Context, w http.ResponseWriter, req
 	CheckErr(err)
 	json.NewDecoder(resp.Body).Decode(&signup)
 	if signup.Success {
+		_, err := StashRegistrationForm(ctx, &regform)
+		CheckErr(err)
 		showPaymentForm(ctx, w, req, &regform)
 	} else {
 		fmt.Fprint(w, "I'm sorry, you need to sign up first. Go to /signup")
@@ -95,7 +97,9 @@ func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Reque
 func PostRegistrationFormPaymentHandler(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	customerParams := &stripe.CustomerParams{Email: r.Form.Get("stripeEmail")}
+	emailAddress := r.Form.Get("stripeEmail")
+
+	customerParams := &stripe.CustomerParams{Email: emailAddress}
 	customerParams.SetSource(r.Form.Get("stripeToken"))
 
 	httpClient := urlfetch.Client(ctx)
@@ -116,20 +120,24 @@ func PostRegistrationFormPaymentHandler(ctx context.Context, w http.ResponseWrit
 	charge, err := sc.Charges.New(chargeParams)
 	if err != nil {
 		fmt.Fprintf(w, "Could not process payment: %v", err)
+		return
 	}
-	fmt.Fprintf(w, "Completed payment: %v", charge.ID)
-}
-
-type RegistrationForm struct {
-	First_Name    string
-	Last_Name     string
-	Email_Address string
-	Password      string
-	Conf_Password string
-	Country       CountryType
-	City          string
-	Sobriety_Date time.Time
-	Member_Of     []Fellowship
+	regform, err := GetRegistrationForm(ctx, emailAddress)
+	CheckErr(err)
+	user := &User{
+		Creation_Date:      time.Now(),
+		First_Name:         regform.First_Name,
+		Last_Name:          regform.Last_Name,
+		Email_Address:      regform.Email_Address,
+		Password:           regform.Password,
+		Country:            regform.Country,
+		City:               regform.City,
+		Sobriety_Date:      regform.Sobriety_Date,
+		Member_Of:          regform.Member_Of,
+		Stripe_Customer_ID: charge.Customer.ID}
+	_, err = AddUser(ctx, user)
+	CheckErr(err)
+	fmt.Fprintf(w, "Completed payment:", charge.ID)
 }
 
 type Signup struct {
