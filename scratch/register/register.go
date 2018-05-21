@@ -65,30 +65,30 @@ func GetRegistrationFormHandler(ctx context.Context, w http.ResponseWriter, req 
 }
 
 func PostRegistrationFormHandler(ctx context.Context, w http.ResponseWriter, req *http.Request) {
-	var registration RegistrationForm
+	var regform RegistrationForm
 	var signup Signup
 	err := req.ParseForm()
 	CheckErr(err)
-	err = schemaDecoder.Decode(&registration, req.PostForm)
+	err = schemaDecoder.Decode(&regform, req.PostForm)
 	CheckErr(err)
 	client := urlfetch.Client(ctx)
-	resp, err := client.Get(fmt.Sprintf("%s/%s", config.SignupURL, registration.Email_Address))
+	resp, err := client.Get(fmt.Sprintf("%s/%s", config.SignupURL, regform.Email_Address))
 	CheckErr(err)
 	json.NewDecoder(resp.Body).Decode(&signup)
 	if signup.Success {
-		showPaymentForm(ctx, w, req, &registration)
+		showPaymentForm(ctx, w, req, &regform)
 	} else {
 		fmt.Fprint(w, "I'm sorry, you need to sign up first. Go to /signup")
 	}
 }
 
-func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Request, registration *RegistrationForm) {
+func showPaymentForm(ctx context.Context, w http.ResponseWriter, req *http.Request, regform *RegistrationForm) {
 	tmpl := templates.Lookup("stripe.tmpl")
 	tmpl.Execute(w,
 		map[string]interface{}{
 			"Key":            publishableKey,
 			csrf.TemplateTag: csrf.TemplateField(req),
-			"Email":          registration.Email_Address,
+			"Email":          regform.Email_Address,
 		})
 }
 
