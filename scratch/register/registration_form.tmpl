@@ -56,8 +56,8 @@
 
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="The_Country">Country</label>
-                <select name="The_Country" id="The_Country" class="custom-select d-block w-100 form-control medium valid">{{ range $i, $country := $.Countries }}
+                <label for="Country">Country</label>
+                <select name="Country" id="Country" class="custom-select d-block w-100 form-control medium valid">{{ range $i, $country := $.Countries }}
                   <option value="{{ inc $i }}">{{ $country }}</option>{{ end }}
                 </select>
                 <div class="invalid-feedback">

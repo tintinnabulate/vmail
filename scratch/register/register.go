@@ -126,7 +126,7 @@ type Registration struct {
 	Email_Address string
 	Password      string
 	Conf_Password string
-	The_Country   Country
+	Country       CountryType
 	City          string
 	Sobriety_Date time.Time
 	Member_Of     []Fellowship

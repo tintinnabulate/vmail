@@ -1,9 +1,9 @@
 package main
 
-type Country int
+type CountryType int
 
 const (
-	Afghanistan Country = iota + 1
+	Afghanistan CountryType = iota + 1
 	Albania
 	Algeria
 	American_Samoa
@@ -54,7 +54,7 @@ const (
 	Congo
 	Cook_Islands
 	Costa_Rica
-	Croatia_Hrvatska
+	Croatia
 	Cuba
 	Cyprus
 	Czech_Republic
@@ -145,6 +145,7 @@ const (
 	Moldova_Republic_of
 	Monaco
 	Mongolia
+	Montenegro
 	Montserrat
 	Morocco
 	Mozambique
@@ -178,7 +179,7 @@ const (
 	Qatar
 	Reunion
 	Romania
-	Russian_Federation
+	Russia
 	Rwanda
 	Saint_Kitts_and_Nevis
 	Saint_Lucia
@@ -187,6 +188,7 @@ const (
 	San_Marino
 	Sao_Tome_and_Principe
 	Saudi_Arabia
+	Serbia
 	Senegal
 	Seychelles
 	Sierra_Leone
@@ -244,7 +246,7 @@ const (
 	Zimbabwe
 )
 
-var Countries = []Country{
+var Countries = []CountryType{
 	Afghanistan,
 	Albania,
 	Algeria,
@@ -296,7 +298,7 @@ var Countries = []Country{
 	Congo,
 	Cook_Islands,
 	Costa_Rica,
-	Croatia_Hrvatska,
+	Croatia,
 	Cuba,
 	Cyprus,
 	Czech_Republic,
@@ -420,7 +422,7 @@ var Countries = []Country{
 	Qatar,
 	Reunion,
 	Romania,
-	Russian_Federation,
+	Russia,
 	Rwanda,
 	Saint_Kitts_and_Nevis,
 	Saint_Lucia,
@@ -484,6 +486,56 @@ var Countries = []Country{
 	Zaire,
 	Zambia,
 	Zimbabwe,
+}
+
+var EURYPAA_Countries = []CountryType{
+	Albania,
+	Andorra,
+	Armenia,
+	Austria,
+	Azerbaijan,
+	Belgium,
+	Belarus,
+	Bosnia_and_Herzegovina,
+	Bulgaria,
+	Croatia,
+	Cyprus,
+	Czech_Republic,
+	Denmark,
+	Estonia,
+	Finland,
+	Yugoslavia,
+	Macedonia,
+	France,
+	Georgia,
+	Germany,
+	Greece,
+	Hungary,
+	Iceland,
+	Ireland,
+	Israel,
+	Italy,
+	Latvia,
+	Liechtenstein,
+	Lithuania,
+	Luxembourg,
+	Malta,
+	Moldova_Republic_of,
+	Monaco,
+	Montenegro,
+	Netherlands,
+	Norway,
+	Poland,
+	Portugal,
+	Russia,
+	San_Marino,
+	Serbia,
+	Slovakia,
+	Slovenia,
+	Spain,
+	Sweden,
+	Turkey,
+	United_Kingdom,
 }
 
 type Fellowship int

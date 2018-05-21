@@ -4,18 +4,39 @@ import (
 	"time"
 )
 
-type User struct {
+type UserModel struct {
+	User_ID            int
+	Creation_Date      time.Time
 	First_Name         string
 	Last_Name          string
 	Email_Address      string
 	Password           string
-	The_Country        Country
-	Zip_or_Postal_Code string
+	Conf_Password      string
+	The_CountryType    CountryType
 	City               string
-	State              string
-	Phone_Number       string
 	Sobriety_Date      time.Time
-	Birth_Date         time.Time
 	Member_Of          []Fellowship
-	YPAA_Committee     string
+	Stripe_Customer_ID string
+}
+
+type RegistrationModel struct {
+	User_ID          int
+	Convention_ID    int
+	Creation_Date    time.Time
+	Stripe_Charge_ID string
+}
+
+type ConventionModel struct {
+	Convention_ID     int
+	Creation_Date     time.Time
+	Year              int
+	The_CountryType   CountryType
+	Cost              int
+	Currency_Code     string
+	Start_Date        time.Time
+	End_Date          time.Time
+	Hotel             string
+	Hotel_Is_Venue    bool
+	Venue             string
+	Stripe_Product_ID string
 }
