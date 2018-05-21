@@ -5,7 +5,7 @@ import (
 )
 
 type UserModel struct {
-	User_ID            int
+	User_ID            int // pk
 	Creation_Date      time.Time
 	First_Name         string
 	Last_Name          string
@@ -20,14 +20,15 @@ type UserModel struct {
 }
 
 type RegistrationModel struct {
-	User_ID          int
-	Convention_ID    int
+	Registration_ID  int // pk
+	User_ID          int // fk
+	Convention_ID    int // fk
 	Creation_Date    time.Time
 	Stripe_Charge_ID string
 }
 
 type ConventionModel struct {
-	Convention_ID     int
+	Convention_ID     int // pk
 	Creation_Date     time.Time
 	Year              int
 	The_CountryType   CountryType
