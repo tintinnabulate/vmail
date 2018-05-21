@@ -240,7 +240,6 @@ const (
 	Wallis_and_Futuna_Islands
 	Western_Sahara
 	Yemen
-	Yugoslavia
 	Zaire
 	Zambia
 	Zimbabwe
@@ -482,7 +481,6 @@ var Countries = []CountryType{
 	Wallis_and_Futuna_Islands,
 	Western_Sahara,
 	Yemen,
-	Yugoslavia,
 	Zaire,
 	Zambia,
 	Zimbabwe,
@@ -504,7 +502,6 @@ var EURYPAA_Countries = []CountryType{
 	Denmark,
 	Estonia,
 	Finland,
-	Yugoslavia,
 	Macedonia,
 	France,
 	Georgia,
