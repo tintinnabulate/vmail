@@ -66,11 +66,8 @@ That form wants to be as simple as possible.
 * When a User registers, a Registration is created against that user, for that particular convention.
 * Payment must be taken to create a Registration
 * Convention is also an object
-
-
 * We will need some facility for forgotten / resetting passwords... :(
 * We will need some facility for the user modifying User details
-
 
 Database Objects:
 
@@ -78,8 +75,8 @@ Database Objects:
 
 ```
 type User struct {
-    User_ID            int
-    Creation_Date      time.Time
+	User_ID            int
+	Creation_Date      time.Time
 	First_Name         string
 	Last_Name          string
 	Email_Address      string
@@ -88,10 +85,8 @@ type User struct {
 	Conf_Password      string
 	The_Country        Country
 	City               string
-	Zip_or_Postal_Code string
 	Sobriety_Date      time.Time
 	Member_Of          []Fellowship
-	Any_Special_Needs  []SpecialNeed
 }
 ```
 
@@ -99,6 +94,7 @@ type User struct {
 
 ```
 type Registration struct {
+    User_ID             int
     Convention_ID       int
     Creation_Date       time.Time
     Stripe_Charge_ID    string
@@ -109,17 +105,17 @@ type Registration struct {
 
 ```
 type Convention struct {
-    Convention_ID   int
-    Creation_Date   time.Time
-    Year            int
-    Country         EURYPAA_Country
-    Cost            int
-    Currency_Code   string
-    Start_Date      time.Time
-    End_Date        time.Time
-    Venue           string
-    Hotel           string
-    Venue_Is_Hotel  bool
+	Convention_ID   int
+	Creation_Date   time.Time
+	Year            int
+	Country         EURYPAA_Country
+	Cost            int
+	Currency_Code   string
+	Start_Date      time.Time
+	End_Date        time.Time
+	Venue           string
+	Hotel           string
+	Venue_Is_Hotel  bool
 }
 ```
 
