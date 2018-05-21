@@ -20,3 +20,4 @@ Again, use signup microservice!
 
 * See [https://tutorialedge.net/golang/consuming-restful-api-with-go/]()
 * See [https://stackoverflow.com/questions/26035816/testing-post-method-with-csrf]()
+* See [https://gowebexamples.com/password-hashing/]()
