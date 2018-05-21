@@ -515,15 +515,3 @@ var SpecialNeeds = []SpecialNeed{
 	Wheelchair_Access,
 	Translation_Services,
 }
-
-type ServiceOpportunity int
-
-const (
-	Outreach ServiceOpportunity = iota + 1
-	Service
-)
-
-var ServiceOpportunities = []ServiceOpportunity{
-	Outreach,
-	Service,
-}

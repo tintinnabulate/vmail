@@ -61,7 +61,6 @@ func GetRegistrationHandler(ctx context.Context, w http.ResponseWriter, req *htt
 			"Countries":            Countries,
 			"Fellowships":          Fellowships,
 			"SpecialNeeds":         SpecialNeeds,
-			"ServiceOpportunities": ServiceOpportunities,
 			csrf.TemplateTag:       csrf.TemplateField(req),
 		})
 }
