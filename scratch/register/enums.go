@@ -3,9 +3,7 @@ package main
 type Country int
 
 const (
-	United_States Country = iota + 1
-	Canada
-	Afghanistan
+	Afghanistan Country = iota + 1
 	Albania
 	Algeria
 	American_Samoa
@@ -42,6 +40,7 @@ const (
 	Burundi
 	Cambodia
 	Cameroon
+	Canada
 	Cape_Verde
 	Cayman_Islands
 	Central_African_Republic
@@ -226,6 +225,7 @@ const (
 	Ukraine
 	United_Arab_Emirates
 	United_Kingdom
+	United_States
 	United_States_minor_outlying_islands
 	Uruguay
 	Uzbekistan
@@ -245,8 +245,6 @@ const (
 )
 
 var Countries = []Country{
-	United_States,
-	Canada,
 	Afghanistan,
 	Albania,
 	Algeria,
@@ -284,6 +282,7 @@ var Countries = []Country{
 	Burundi,
 	Cambodia,
 	Cameroon,
+	Canada,
 	Cape_Verde,
 	Cayman_Islands,
 	Central_African_Republic,
@@ -468,6 +467,7 @@ var Countries = []Country{
 	Ukraine,
 	United_Arab_Emirates,
 	United_Kingdom,
+	United_States,
 	United_States_minor_outlying_islands,
 	Uruguay,
 	Uzbekistan,

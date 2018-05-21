@@ -55,7 +55,7 @@
             </div>
 
             <div class="row">
-              <div class="col-md-5 mb-3">
+              <div class="col-md-6 mb-3">
                 <label for="The_Country">Country</label>
                 <select name="The_Country" id="The_Country" class="custom-select d-block w-100 form-control medium valid">{{ range $i, $country := $.Countries }}
                   <option value="{{ inc $i }}">{{ $country }}</option>{{ end }}
@@ -64,16 +64,9 @@
                   Please select a valid country.
                 </div>
               </div>
-              <div class="col-md-4 mb-3">
+              <div class="col-md-6 mb-3">
                 <label for="City">City</label>
                 <input type="text" class="form-control" id="City" name="City" placeholder="" required="">
-              </div>
-              <div class="col-md-3 mb-3">
-                <label for="Zip_or_Postal_Code">Zip or postal code</label>
-                <input type="text" class="form-control" id="Zip_or_Postal_Code" name="Zip_or_Postal_Code" placeholder="" required="">
-                <div class="invalid-feedback">
-                  Zip code required.
-                </div>
               </div>
             </div>
 

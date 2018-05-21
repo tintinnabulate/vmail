@@ -121,16 +121,15 @@ func PostRegistrationPaymentHandler(ctx context.Context, w http.ResponseWriter, 
 }
 
 type Registration struct {
-	First_Name         string
-	Last_Name          string
-	Email_Address      string
-	Password           string
-	Conf_Password      string
-	The_Country        Country
-	City               string
-	Zip_or_Postal_Code string
-	Sobriety_Date      time.Time
-	Member_Of          []Fellowship
+	First_Name    string
+	Last_Name     string
+	Email_Address string
+	Password      string
+	Conf_Password string
+	The_Country   Country
+	City          string
+	Sobriety_Date time.Time
+	Member_Of     []Fellowship
 }
 
 type Signup struct {
