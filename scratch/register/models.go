@@ -4,12 +4,12 @@ import (
 	"time"
 )
 
+// Email_Address is primary key
 type User struct {
-	User_ID            int64 // pk
+	Email_Address      string
 	Creation_Date      time.Time
 	First_Name         string
 	Last_Name          string
-	Email_Address      string
 	Password           string
 	Conf_Password      string
 	Country            CountryType
@@ -20,15 +20,15 @@ type User struct {
 }
 
 type Registration struct {
-	Registration_ID  int64 // pk
-	User_ID          int64 // fk
-	Convention_ID    int64 // fk
-	Creation_Date    time.Time
-	Stripe_Charge_ID string
+	ID                 int64  // pk
+	User_Email_Address string // fk
+	Convention_ID      int64  // fk
+	Creation_Date      time.Time
+	Stripe_Charge_ID   string
 }
 
 type Convention struct {
-	Convention_ID     int64 // pk
+	ID                int64 // pk
 	Creation_Date     time.Time
 	Year              int
 	Country           CountryType
@@ -42,11 +42,11 @@ type Convention struct {
 	Stripe_Product_ID string
 }
 
+// Email_Address is primary key
 type RegistrationForm struct {
-	id            int64 // pk
+	Email_Address string
 	First_Name    string
 	Last_Name     string
-	Email_Address string
 	Password      string
 	Conf_Password string
 	Country       CountryType

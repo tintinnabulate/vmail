@@ -9,14 +9,12 @@
 package main
 
 import (
-	"fmt"
-
 	"google.golang.org/appengine/datastore"
 
 	"golang.org/x/net/context"
 )
 
-// AddSignup adds a signup with the given verification code to the datastore,
+// StashRegistrationForm adds a signup with the given verification code to the datastore,
 // returning the key of the newly created entity.
 func StashRegistrationForm(ctx context.Context, regform *RegistrationForm) (*datastore.Key, error) {
 	key := datastore.NewKey(ctx, "RegistrationForm", regform.Email_Address, 0, nil)
@@ -24,20 +22,16 @@ func StashRegistrationForm(ctx context.Context, regform *RegistrationForm) (*dat
 	return k, err
 }
 
-// GetSignupCode gets the signup code matching the given email address.
+// GetRegistrationForm gets the signup code matching the given email address.
 // This should only be called during testing.
 func GetRegistrationForm(ctx context.Context, email string) (RegistrationForm, error) {
-	q := datastore.NewQuery("RegistrationForm").Filter("Email_Address =", email)
-	var regforms []RegistrationForm
-	if _, err := q.GetAll(ctx, &regforms); err != nil {
-		return RegistrationForm{}, err
-	}
-	if len(regforms) < 1 {
-		return RegistrationForm{}, fmt.Errorf("Email not in database: %s", email)
-	}
-	return regforms[0], nil
+	key := datastore.NewKey(ctx, "RegistrationForm", email, 0, nil)
+	var regform RegistrationForm
+	err := datastore.Get(ctx, key, &regform)
+	return regform, err
 }
 
+// AddUser does a thing
 func AddUser(ctx context.Context, user *User) (*datastore.Key, error) {
 	key := datastore.NewKey(ctx, "User", user.Email_Address, 0, nil)
 	k, err := datastore.Put(ctx, key, user)
