@@ -32,6 +32,7 @@ type Convention struct {
 	Creation_Date     time.Time
 	Year              int
 	Country           CountryType
+	City              string
 	Cost              int
 	Currency_Code     string
 	Start_Date        time.Time

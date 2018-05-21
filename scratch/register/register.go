@@ -26,6 +26,8 @@ func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter.HandleFunc("/register", f(GetRegistrationFormHandler)).Methods("GET")
 	appRouter.HandleFunc("/register", f(PostRegistrationFormHandler)).Methods("POST")
 	appRouter.HandleFunc("/charge", f(PostRegistrationFormPaymentHandler)).Methods("POST")
+	appRouter.HandleFunc("/new_convention", f(GetNewConventionHandlerForm)).Methods("GET")
+	appRouter.HandleFunc("/new_convention", f(PostNewConventionHandlerForm)).Methods("POST")
 
 	return appRouter
 }
@@ -139,6 +141,29 @@ func PostRegistrationFormPaymentHandler(ctx context.Context, w http.ResponseWrit
 	_, err = AddUser(ctx, user)
 	CheckErr(err)
 	fmt.Fprintf(w, "Completed payment! Well not really... this was a test :-P")
+}
+
+func GetNewConventionHandlerForm(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	t, err := template.New("new_convention.tmpl").Funcs(funcMap).ParseFiles("new_convention.tmpl")
+	CheckErr(err)
+	t.ExecuteTemplate(w,
+		"new_convention.tmpl",
+		map[string]interface{}{
+			"Countries":      EURYPAA_Countries,
+			csrf.TemplateTag: csrf.TemplateField(req),
+		})
+}
+
+func PostNewConventionHandlerForm(ctx context.Context, w http.ResponseWriter, req *http.Request) {
+	t, err := template.New("registration_form.tmpl").Funcs(funcMap).ParseFiles("registration_form.tmpl")
+	CheckErr(err)
+	t.ExecuteTemplate(w,
+		"registration_form.tmpl",
+		map[string]interface{}{
+			"Countries":      Countries,
+			"Fellowships":    Fellowships,
+			csrf.TemplateTag: csrf.TemplateField(req),
+		})
 }
 
 type Signup struct {
