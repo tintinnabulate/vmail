@@ -31,7 +31,7 @@ type Convention struct {
 	ID                int64 // pk
 	Creation_Date     time.Time
 	Year              int
-	Country           CountryType
+	Country           EURYPAA_Country
 	City              string
 	Cost              int
 	Currency_Code     string

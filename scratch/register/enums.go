@@ -1,5 +1,6 @@
 package main
 
+//go:generate stringer -type=Country
 type CountryType int
 
 const (
@@ -486,55 +487,108 @@ var Countries = []CountryType{
 	Zimbabwe,
 }
 
-var EURYPAA_Countries = []CountryType{
-	Albania,
-	Andorra,
-	Armenia,
-	Austria,
-	Azerbaijan,
-	Belgium,
-	Belarus,
-	Bosnia_and_Herzegovina,
-	Bulgaria,
-	Croatia,
-	Cyprus,
-	Czech_Republic,
-	Denmark,
-	Estonia,
-	Finland,
-	Macedonia,
-	France,
-	Georgia,
-	Germany,
-	Greece,
-	Hungary,
-	Iceland,
-	Ireland,
-	Israel,
-	Italy,
-	Latvia,
-	Liechtenstein,
-	Lithuania,
-	Luxembourg,
-	Malta,
-	Moldova_Republic_of,
-	Monaco,
-	Montenegro,
-	Netherlands,
-	Norway,
-	Poland,
-	Portugal,
-	Russia,
-	San_Marino,
-	Serbia,
-	Slovakia,
-	Slovenia,
-	Spain,
-	Sweden,
-	Turkey,
-	United_Kingdom,
+//go:generate stringer -type=EURYPAA_Country
+type EURYPAA_Country int
+
+const (
+	Albania_ EURYPAA_Country = iota + 1
+	Andorra_
+	Armenia_
+	Austria_
+	Azerbaijan_
+	Belgium_
+	Belarus_
+	Bosnia_and_Herzegovina_
+	Bulgaria_
+	Croatia_
+	Cyprus_
+	Czech_Republic_
+	Denmark_
+	Estonia_
+	Finland_
+	Macedonia_
+	France_
+	Georgia_
+	Germany_
+	Greece_
+	Hungary_
+	Iceland_
+	Ireland_
+	Israel_
+	Italy_
+	Latvia_
+	Liechtenstein_
+	Lithuania_
+	Luxembourg_
+	Malta_
+	Moldova_Republic_of_
+	Monaco_
+	Montenegro_
+	Netherlands_
+	Norway_
+	Poland_
+	Portugal_
+	Russia_
+	San_Marino_
+	Serbia_
+	Slovakia_
+	Slovenia_
+	Spain_
+	Sweden_
+	Turkey_
+	United_Kingdom_
+)
+
+var EURYPAA_Countries = []EURYPAA_Country{
+	Albania_,
+	Andorra_,
+	Armenia_,
+	Austria_,
+	Azerbaijan_,
+	Belgium_,
+	Belarus_,
+	Bosnia_and_Herzegovina_,
+	Bulgaria_,
+	Croatia_,
+	Cyprus_,
+	Czech_Republic_,
+	Denmark_,
+	Estonia_,
+	Finland_,
+	Macedonia_,
+	France_,
+	Georgia_,
+	Germany_,
+	Greece_,
+	Hungary_,
+	Iceland_,
+	Ireland_,
+	Israel_,
+	Italy_,
+	Latvia_,
+	Liechtenstein_,
+	Lithuania_,
+	Luxembourg_,
+	Malta_,
+	Moldova_Republic_of_,
+	Monaco_,
+	Montenegro_,
+	Netherlands_,
+	Norway_,
+	Poland_,
+	Portugal_,
+	Russia_,
+	San_Marino_,
+	Serbia_,
+	Slovakia_,
+	Slovenia_,
+	Spain_,
+	Sweden_,
+	Turkey_,
+	United_Kingdom_,
 }
 
+//go:generate stringer -type=Fellowship
 type Fellowship int
 
 const (
