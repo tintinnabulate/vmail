@@ -16,7 +16,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"golang.org/x/net/context"
-	"google.golang.org/appengine"
 	"google.golang.org/appengine/mail"
 )
 
@@ -117,20 +116,6 @@ type configuration struct {
 	ProjectURL   string
 }
 
-// Email holds our JSON response for GET and POST /signup/{email}
-type Email struct {
-	Address string `json:"address"`
-	Success bool   `json:"success"`
-	Note    string `json:"note"`
-}
-
-// Verification holds our JSON response for GET /verify/{code}
-type Verification struct {
-	Code    string `json:"code"`
-	Success bool   `json:"success"`
-	Note    string `json:"note"`
-}
-
 var (
 	config    configuration
 	appRouter mux.Router
@@ -178,22 +163,4 @@ func EmailVerificationCode(ctx context.Context, address, code string) error {
 func init() {
 	LoadConfig()
 	http.Handle("/", CreateHandler(ContextHandlerToHTTPHandler))
-}
-
-// HandlerFunc is our Standard http handler
-type HandlerFunc func(w http.ResponseWriter, r *http.Request)
-
-// ContextHandlerFunc is our context.Context http handler
-type ContextHandlerFunc func(ctx context.Context, w http.ResponseWriter, r *http.Request)
-
-// ContextHandlerToHandlerHOF is our Higher order function
-// for changing a HandlerFunc to a ContextHandlerFunc, usually creating the context.Context along the way.
-type ContextHandlerToHandlerHOF func(f ContextHandlerFunc) HandlerFunc
-
-// ContextHandlerToHTTPHandler Creates a new Context and uses it when calling f
-func ContextHandlerToHTTPHandler(f ContextHandlerFunc) HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ctx := appengine.NewContext(r)
-		f(ctx, w, r)
-	}
 }
