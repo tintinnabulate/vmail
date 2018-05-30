@@ -46,7 +46,7 @@ func TestCreateSignupEndpoint(t *testing.T) {
 		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
 		record := httptest.NewRecorder()
 
-		req, err := http.NewRequest("POST", "/signup/lolz", nil)
+		req, err := http.NewRequest("POST", "/signup/foo/lolz", nil)
 		c.So(err, c.ShouldBeNil)
 
 		c.Convey("It should return a 200 response", func() {
@@ -71,7 +71,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 		record2 := httptest.NewRecorder() // records the 'verify signup' response
 		record3 := httptest.NewRecorder() // records the 'check signup is verified' repsonse
 
-		req, err := http.NewRequest("POST", "/signup/lolz", nil)
+		req, err := http.NewRequest("POST", "/signup/foo/lolz", nil)
 		c.So(err, c.ShouldBeNil)
 
 		c.Convey("It should succeed", func() {
@@ -84,17 +84,20 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 			// Look up code sent to 'lolz'
 			code, _ := GetSignupCode(ctx, "lolz")
 
-			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/verify/%s", code), nil)
+			_, errk := AddSite(ctx, "foo", "http://barnacles.com")
+			CheckErr(errk)
+
+			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/verify/foo/%s", code), nil)
 			c.So(err2, c.ShouldBeNil)
 
 			c.Convey("Verifying the code sent to 'lolz' should succeed", func() {
 
 				r.ServeHTTP(record2, req2)
 				c.So(record2.Code, c.ShouldEqual, 200)
-				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf(`{"code":"%s","success":true,"note":""}
+				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf(`{"code":"%s","success":true,"note":"http://barnacles.com"}
 `, code))
 
-				req3, err3 := http.NewRequest("GET", "/signup/lolz", nil)
+				req3, err3 := http.NewRequest("GET", "/signup/foo/lolz", nil)
 				c.So(err3, c.ShouldBeNil)
 
 				c.Convey("Checking email 'lolz' is verified should succeed", func() {
@@ -120,8 +123,11 @@ func TestVerifySignupEndpoint(t *testing.T) {
 		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
 		record := httptest.NewRecorder()
 
-		req, err := http.NewRequest("GET", "/verify/lolz", nil)
+		req, err := http.NewRequest("GET", "/verify/foo/lolz", nil)
 		c.So(err, c.ShouldBeNil)
+
+		_, errk := AddSite(ctx, "foo", "http://barnacles.com")
+		CheckErr(errk)
 
 		c.Convey("It should return a 200 response, but fail", func() {
 			r.ServeHTTP(record, req)

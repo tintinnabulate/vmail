@@ -22,9 +22,9 @@ import (
 // CreateHandler creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFunc's.
 func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
-	appRouter.HandleFunc("/signup/{email}", f(CreateSignupEndpoint)).Methods("POST")
-	appRouter.HandleFunc("/verify/{code}", f(VerifyCodeEndpoint)).Methods("GET")
-	appRouter.HandleFunc("/signup/{email}", f(IsSignupVerifiedEndpoint)).Methods("GET")
+	appRouter.HandleFunc("/signup/{site_code}/{email}", f(CreateSignupEndpoint)).Methods("POST")
+	appRouter.HandleFunc("/verify/{site_code}/{code}", f(VerifyCodeEndpoint)).Methods("GET")
+	appRouter.HandleFunc("/signup/{site_code}/{email}", f(IsSignupVerifiedEndpoint)).Methods("GET")
 
 	return appRouter
 }
@@ -35,6 +35,7 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 	w.Header().Set("Content-Type", "application/json")
 	var email Email
 	email.Address = params["email"]
+	siteCode := params["site_code"]
 	code := ""
 	// Loop until we get a code that is available
 	// TODO: handle the case where we run out of codes (or we loop forever!)
@@ -46,14 +47,14 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 			break
 		}
 	}
-	if err := EmailVerificationCode(ctx, email.Address, code); err != nil {
+	if err := EmailVerificationCode(ctx, email.Address, siteCode, code); err != nil {
 		email.Success = false
 		email.Note = err.Error()
 		err = json.NewEncoder(w).Encode(email)
 		CheckErr(err)
 		return
 	}
-	_, err := AddSignup(ctx, email.Address, code)
+	_, err := AddSignup(ctx, siteCode, email.Address, code)
 	if err != nil {
 		email.Success = false
 		email.Note = err.Error()
@@ -67,18 +68,19 @@ func CreateSignupEndpoint(ctx context.Context, w http.ResponseWriter, req *http.
 // VerifyCodeEndpoint handles GET /verify/{code}
 func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
-	w.Header().Set("Content-Type", "application/json")
 	var verification Verification
 	verification.Code = params["code"]
-	err := MarkVerified(ctx, verification.Code)
+	siteCode := params["site_code"]
 	verification.Success = true
-	verification.Note = ""
+	site, _ := GetSite(ctx, siteCode)
+	verification.Note = site.RootURL
+	err := MarkVerified(ctx, verification.Code)
 	if err != nil {
 		verification.Success = false
 		verification.Note = err.Error()
+		http.Redirect(w, req, site.RootURL, http.StatusSeeOther)
 	}
-	err = json.NewEncoder(w).Encode(verification)
-	CheckErr(err)
+	http.Redirect(w, req, site.VerifiedURL, http.StatusFound)
 }
 
 // IsSignupVerifiedEndpoint handles GET /signup/{email}
@@ -126,7 +128,7 @@ Welcome to %s!
 
 To get started, please click below to confirm your email address:
 
-https://%s/verify/%s
+https://%s/verify/%s/%s
 
 -- 
 Best wishes,
@@ -145,18 +147,18 @@ func LoadConfig() {
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
-func ComposeVerificationEmail(address, code string) *mail.Message {
+func ComposeVerificationEmail(address, siteCode, code string) *mail.Message {
 	return &mail.Message{
 		Sender:  fmt.Sprintf("[DO NOT REPLY] Admin <%s>", config.ProjectEmail),
 		To:      []string{address},
 		Subject: fmt.Sprintf("[%s] Please confirm your account", config.SiteName),
-		Body:    fmt.Sprintf(verificationEmailBody, config.SiteName, config.ProjectURL, code, config.SiteName),
+		Body:    fmt.Sprintf(verificationEmailBody, config.SiteName, config.ProjectURL, siteCode, code, config.SiteName),
 	}
 }
 
 // EmailVerificationCode composes and sends a verification code email
-func EmailVerificationCode(ctx context.Context, address, code string) error {
-	msg := ComposeVerificationEmail(address, code)
+func EmailVerificationCode(ctx context.Context, address, siteCode, code string) error {
+	msg := ComposeVerificationEmail(address, siteCode, code)
 	return mail.Send(ctx, msg)
 }
 
