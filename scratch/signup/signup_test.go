@@ -93,9 +93,10 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 			c.Convey("Verifying the code sent to 'lolz' should succeed", func() {
 
 				r.ServeHTTP(record2, req2)
-				c.So(record2.Code, c.ShouldEqual, 200)
-				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprintf(`{"code":"%s","success":true,"note":"http://barnacles.com"}
-`, code))
+				c.So(record2.Code, c.ShouldEqual, 302)
+				c.So(fmt.Sprint(record2.Body), c.ShouldEqual, fmt.Sprint(`<a href="http://barnacles.com">Found</a>.
+
+`))
 
 				req3, err3 := http.NewRequest("GET", "/signup/foo/lolz", nil)
 				c.So(err3, c.ShouldBeNil)
@@ -131,8 +132,11 @@ func TestVerifySignupEndpoint(t *testing.T) {
 
 		c.Convey("It should return a 200 response, but fail", func() {
 			r.ServeHTTP(record, req)
-			c.So(record.Code, c.ShouldEqual, 200)
-			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"code":"lolz","success":false,"note":"no such verification code"}
+			c.So(record.Code, c.ShouldEqual, 303)
+			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `<a href="http://barnacles.com">See Other</a>.
+
+<a href="http://barnacles.com">Found</a>.
+
 `)
 		})
 	})
