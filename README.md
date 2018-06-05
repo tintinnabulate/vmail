@@ -5,6 +5,7 @@
 ## TODO
 
 * Run `errcheck` on codebase and make sure it has no output! If it has output, handle those errors! `go get -u github.com/kisielk/errcheck`
+* PCI compliance: https://en.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard
 
 ## Go checklist
 
