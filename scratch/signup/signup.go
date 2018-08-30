@@ -129,6 +129,8 @@ To get started, please click below to confirm your email address:
 
 https://%s/verify/%s/%s
 
+This is an automated email. Do not reply to this email address.
+
 -- 
 Best wishes,
 %s Committee.
@@ -148,9 +150,9 @@ func LoadConfig() {
 // ComposeVerificationEmail builds the verification email, ready to be sent
 func ComposeVerificationEmail(site Site, address, code string) *mail.Message {
 	return &mail.Message{
-		Sender:  fmt.Sprintf("[DO NOT REPLY] Admin <%s>", config.ProjectEmail),
+		Sender:  fmt.Sprintf("[DO NOT REPLY] %s Admin <%s>", site.SiteName, config.ProjectEmail),
 		To:      []string{address},
-		Subject: fmt.Sprintf("[%s] Please confirm your account", site.SiteName),
+		Subject: fmt.Sprintf("[%s Registration] Please confirm your email address", site.SiteName),
 		Body:    fmt.Sprintf(verificationEmailBody, site.SiteName, config.ProjectURL, site.Code, code, site.SiteName),
 	}
 }
