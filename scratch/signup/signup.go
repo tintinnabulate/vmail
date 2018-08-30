@@ -108,7 +108,6 @@ func IsSignupVerifiedEndpoint(ctx context.Context, w http.ResponseWriter, req *h
 
 // configuration holds our app configuration settings
 type configuration struct {
-	SiteName     string
 	SiteDomain   string
 	SMTPServer   string
 	SMTPUsername string
@@ -147,18 +146,19 @@ func LoadConfig() {
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
-func ComposeVerificationEmail(address, siteCode, code string) *mail.Message {
+func ComposeVerificationEmail(site Site, address, code string) *mail.Message {
 	return &mail.Message{
 		Sender:  fmt.Sprintf("[DO NOT REPLY] Admin <%s>", config.ProjectEmail),
 		To:      []string{address},
-		Subject: fmt.Sprintf("[%s] Please confirm your account", config.SiteName),
-		Body:    fmt.Sprintf(verificationEmailBody, config.SiteName, config.ProjectURL, siteCode, code, config.SiteName),
+		Subject: fmt.Sprintf("[%s] Please confirm your account", site.SiteName),
+		Body:    fmt.Sprintf(verificationEmailBody, site.SiteName, config.ProjectURL, site.Code, code, site.SiteName),
 	}
 }
 
 // EmailVerificationCode composes and sends a verification code email
 func EmailVerificationCode(ctx context.Context, address, siteCode, code string) error {
-	msg := ComposeVerificationEmail(address, siteCode, code)
+	site, _ := GetSite(ctx, siteCode)
+	msg := ComposeVerificationEmail(site, address, code)
 	return mail.Send(ctx, msg)
 }
 

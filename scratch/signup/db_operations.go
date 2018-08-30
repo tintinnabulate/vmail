@@ -30,6 +30,7 @@ type Signup struct {
 
 type Site struct {
 	CreationTimestamp time.Time `datastore:"created"`
+	SiteName          string    `datastore:"site_name"`
 	Code              string    `datastore:"code"`
 	RootURL           string    `datastore:"root_url"`
 	VerifiedURL       string    `datastore:"verified_url"`
@@ -123,10 +124,11 @@ func GetSignupCode(ctx context.Context, email string) (string, error) {
 // AddSite adds a site with the given verification code to the datastore,
 // returning the key of the newly created entity.
 // Should only be called during testing.
-func AddSite(ctx context.Context, siteCode, rootURL string) (*datastore.Key, error) {
+func AddSite(ctx context.Context, siteName, siteCode, rootURL string) (*datastore.Key, error) {
 	key := datastore.NewKey(ctx, "Site", siteCode, 0, nil)
 	site := &Site{
 		CreationTimestamp: time.Now(),
+		SiteName:          siteName,
 		Code:              siteCode,
 		RootURL:           rootURL,
 		VerifiedURL:       rootURL,

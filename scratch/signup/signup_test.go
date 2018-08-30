@@ -84,7 +84,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 			// Look up code sent to 'lolz'
 			code, _ := GetSignupCode(ctx, "lolz")
 
-			_, errk := AddSite(ctx, "foo", "http://barnacles.com")
+			_, errk := AddSite(ctx, "FOOWEBSITE", "foo", "http://barnacles.com")
 			CheckErr(errk)
 
 			req2, err2 := http.NewRequest("GET", fmt.Sprintf("/verify/foo/%s", code), nil)
@@ -127,7 +127,7 @@ func TestVerifySignupEndpoint(t *testing.T) {
 		req, err := http.NewRequest("GET", "/verify/foo/lolz", nil)
 		c.So(err, c.ShouldBeNil)
 
-		_, errk := AddSite(ctx, "foo", "http://barnacles.com")
+		_, errk := AddSite(ctx, "FOOWEBSITE", "foo", "http://barnacles.com")
 		CheckErr(errk)
 
 		c.Convey("It should return a 200 response, but fail", func() {
