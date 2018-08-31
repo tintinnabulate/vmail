@@ -130,7 +130,7 @@ func TestVerifySignupEndpoint(t *testing.T) {
 		_, errk := AddSite(ctx, "FOOWEBSITE", "foo", "http://barnacles.com")
 		CheckErr(errk)
 
-		c.Convey("It should return a 200 response, but fail", func() {
+		c.Convey("It should return a 303 response, and fail", func() {
 			r.ServeHTTP(record, req)
 			c.So(record.Code, c.ShouldEqual, 303)
 			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `<a href="http://barnacles.com">See Other</a>.
