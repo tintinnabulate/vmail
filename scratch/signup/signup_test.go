@@ -135,8 +135,6 @@ func TestVerifySignupEndpoint(t *testing.T) {
 			c.So(record.Code, c.ShouldEqual, 303)
 			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `<a href="http://barnacles.com">See Other</a>.
 
-<a href="http://barnacles.com">Found</a>.
-
 `)
 		})
 	})

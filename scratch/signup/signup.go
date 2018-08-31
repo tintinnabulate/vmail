@@ -79,8 +79,9 @@ func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Re
 		verification.Success = false
 		verification.Note = err.Error()
 		http.Redirect(w, req, site.RootURL, http.StatusSeeOther)
+	} else {
+		http.Redirect(w, req, site.VerifiedURL, http.StatusFound)
 	}
-	http.Redirect(w, req, site.VerifiedURL, http.StatusFound)
 }
 
 // IsSignupVerifiedEndpoint handles GET /signup/{email}
