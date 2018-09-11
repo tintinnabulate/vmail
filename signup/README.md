@@ -33,6 +33,8 @@ https://www.compoundtheory.com/testing-go-http-handlers-in-google-app-engine-wit
 
 ## TODO
 
+* Maybe use https://gokit.io/ ?
+* Read https://12factor.net/
 * Require OAUTH2
     * [https://cloud.google.com/go/getting-started/authenticate-users]()
     * [https://medium.com/@hfogelberg/the-black-magic-of-oauth-in-golang-part-1-3cef05c28dde]()
