@@ -14,13 +14,13 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-
+	"github.com/tintinnabulate/aecontext-handlers/handlers"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/mail"
 )
 
 // CreateHandler creates my mux.Router. Uses f to convert ContextHandlerFunc's to HandlerFunc's.
-func CreateHandler(f ContextHandlerToHandlerHOF) *mux.Router {
+func CreateHandler(f handlers.ToHandlerHOF) *mux.Router {
 	appRouter := mux.NewRouter()
 	appRouter.HandleFunc("/signup/{site_code}/{email}", f(CreateSignupEndpoint)).Methods("POST")
 	appRouter.HandleFunc("/verify/{site_code}/{code}", f(VerifyCodeEndpoint)).Methods("GET")
@@ -167,5 +167,5 @@ func EmailVerificationCode(ctx context.Context, address, siteCode, code string) 
 
 func init() {
 	LoadConfig()
-	http.Handle("/", CreateHandler(ContextHandlerToHTTPHandler))
+	http.Handle("/", CreateHandler(handlers.ToHTTPHandler))
 }

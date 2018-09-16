@@ -7,43 +7,18 @@ import (
 	"testing"
 
 	c "github.com/smartystreets/goconvey/convey"
-
-	"golang.org/x/net/context"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/aetest"
+	"github.com/tintinnabulate/aecontext-handlers/handlers"
 )
-
-func CreateContextHandlerToHTTPHandler(ctx context.Context) ContextHandlerToHandlerHOF {
-	return func(f ContextHandlerFunc) HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			f(ctx, w, r)
-		}
-	}
-}
-
-func getContext() (context.Context, aetest.Instance) {
-	inst, _ := aetest.NewInstance(
-		&aetest.Options{
-			StronglyConsistentDatastore: true,
-			// SuppressDevAppServerLog:     true,
-		})
-	req, err := inst.NewRequest("GET", "/", nil)
-	if err != nil {
-		inst.Close()
-	}
-	ctx := appengine.NewContext(req)
-	return ctx, inst
-}
 
 // TestCreateSignupEndpoint tests that we can create a signup
 func TestCreateSignupEndpoint(t *testing.T) {
 	LoadConfig()
 
-	ctx, inst := getContext()
+	ctx, inst := handlers.GetTestingContext()
 	defer inst.Close()
 
 	c.Convey("When you want to do foo", t, func() {
-		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
+		r := CreateHandler(handlers.ToHTTPHandlerConverter(ctx))
 		record := httptest.NewRecorder()
 
 		req, err := http.NewRequest("POST", "/signup/foo/lolz", nil)
@@ -62,11 +37,11 @@ func TestCreateSignupEndpoint(t *testing.T) {
 func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 	LoadConfig()
 
-	ctx, inst := getContext()
+	ctx, inst := handlers.GetTestingContext()
 	defer inst.Close()
 
 	c.Convey("When creating a signup for email address 'lolz'", t, func() {
-		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
+		r := CreateHandler(handlers.ToHTTPHandlerConverter(ctx))
 		record := httptest.NewRecorder()  // records the 'create signup' response
 		record2 := httptest.NewRecorder() // records the 'verify signup' response
 		record3 := httptest.NewRecorder() // records the 'check signup is verified' repsonse
@@ -117,11 +92,11 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 func TestVerifySignupEndpoint(t *testing.T) {
 	LoadConfig()
 
-	ctx, inst := getContext()
+	ctx, inst := handlers.GetTestingContext()
 	defer inst.Close()
 
 	c.Convey("When you try and verify a non-existent code", t, func() {
-		r := CreateHandler(CreateContextHandlerToHTTPHandler(ctx))
+		r := CreateHandler(handlers.ToHTTPHandlerConverter(ctx))
 		record := httptest.NewRecorder()
 
 		req, err := http.NewRequest("GET", "/verify/foo/lolz", nil)
