@@ -1,7 +1,7 @@
 # TODO
 
 * Use gRPC, not this horrendous 'REST-ful' 'API'.
-* Use <https://github.com/spf14/viper> to load config.
+* Use <https://github.com/spf13/viper> to load config.
 * Check out <https://gokit.io/> also.
 * Read <https://12factor.net/>.
 * Require OAUTH2?
