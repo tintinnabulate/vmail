@@ -1,8 +1,9 @@
 # TODO
 
 * Use gRPC, not this horrendous 'REST-ful' 'API'.
-* Check out https://gokit.io/ also.
-* Read https://12factor.net/
+* Use <https://github.com/spf14/viper> to load config.
+* Check out <https://gokit.io/> also.
+* Read <https://12factor.net/>.
 * Require OAUTH2?
     * [https://cloud.google.com/go/getting-started/authenticate-users]()
     * [https://medium.com/@hfogelberg/the-black-magic-of-oauth-in-golang-part-1-3cef05c28dde]()
