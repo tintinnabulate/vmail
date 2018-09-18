@@ -4,16 +4,25 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	c "github.com/smartystreets/goconvey/convey"
 	"github.com/tintinnabulate/aecontext-handlers/handlers"
 )
 
+func TestMain(m *testing.M) {
+	testSetup()
+	retCode := m.Run()
+	os.Exit(retCode)
+}
+
+func testSetup() {
+	configInit("config.example")
+}
+
 // TestCreateSignupEndpoint tests that we can create a signup
 func TestCreateSignupEndpoint(t *testing.T) {
-	LoadConfig()
-
 	ctx, inst := handlers.GetTestingContext()
 	defer inst.Close()
 
@@ -35,8 +44,6 @@ func TestCreateSignupEndpoint(t *testing.T) {
 
 // TestCreateAndVerifyAndCheckSignupEndpoint tests that we can create a signup, verify it, and then check that it is verified
 func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
-	LoadConfig()
-
 	ctx, inst := handlers.GetTestingContext()
 	defer inst.Close()
 
@@ -90,8 +97,6 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 
 // TestVerifySignupEndpoint tests that verifying a non-existent code produces a JSON response where "success": false .
 func TestVerifySignupEndpoint(t *testing.T) {
-	LoadConfig()
-
 	ctx, inst := handlers.GetTestingContext()
 	defer inst.Close()
 

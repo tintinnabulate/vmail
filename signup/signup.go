@@ -11,9 +11,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 	"github.com/tintinnabulate/aecontext-handlers/handlers"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/mail"
@@ -107,19 +107,7 @@ func IsSignupVerifiedEndpoint(ctx context.Context, w http.ResponseWriter, req *h
 	CheckErr(err)
 }
 
-// configuration holds our app configuration settings
-type configuration struct {
-	SiteDomain   string
-	SMTPServer   string
-	SMTPUsername string
-	SMTPPassword string
-	ProjectID    string
-	ProjectEmail string
-	ProjectURL   string
-}
-
 var (
-	config    configuration
 	appRouter mux.Router
 )
 
@@ -137,24 +125,20 @@ Best wishes,
 %s Committee.
 `
 
-// LoadConfig loads the app configuration JSON into the `config` variable
-func LoadConfig() {
-	file, _ := os.Open("config.json")
-	decoder := json.NewDecoder(file)
-	config = configuration{}
-	err := decoder.Decode(&config)
-	CheckErr(err)
-	err = file.Close()
-	CheckErr(err)
+// configInit : load in config file using spf13/viper
+func configInit(configName string) {
+	viper.SetConfigName(configName)
+	viper.AddConfigPath(".")
+	viper.ReadInConfig()
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
 func ComposeVerificationEmail(site Site, address, code string) *mail.Message {
 	return &mail.Message{
-		Sender:  fmt.Sprintf("[DO NOT REPLY] %s Admin <%s>", site.SiteName, config.ProjectEmail),
+		Sender:  fmt.Sprintf("[DO NOT REPLY] %s Admin <%s>", site.SiteName, viper.GetString("ProjectEmail")),
 		To:      []string{address},
 		Subject: fmt.Sprintf("[%s Registration] Please confirm your email address", site.SiteName),
-		Body:    fmt.Sprintf(verificationEmailBody, site.SiteName, config.ProjectURL, site.Code, code, site.SiteName),
+		Body:    fmt.Sprintf(verificationEmailBody, site.SiteName, viper.GetString("ProjectURL"), site.Code, code, site.SiteName),
 	}
 }
 
@@ -166,6 +150,6 @@ func EmailVerificationCode(ctx context.Context, address, siteCode, code string) 
 }
 
 func init() {
-	LoadConfig()
+	configInit("config")
 	http.Handle("/", CreateHandler(handlers.ToHTTPHandler))
 }
