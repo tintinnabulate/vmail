@@ -1,6 +1,6 @@
-<a href="https://goreportcard.com/report/github.com/tintinnabulate/registration"><img src="https://goreportcard.com/badge/github.com/tintinnabulate/registration" /></a>
-
 # Signup
+
+[![Build Status](https://travis-ci.org/tintinnabulate/vmail.svg?branch=master)](https://travis-ci.org/tintinnabulate/vmail) <a href="https://goreportcard.com/report/github.com/tintinnabulate/registration"><img src="https://goreportcard.com/badge/github.com/tintinnabulate/registration" /></a>
 
 Really this should be called 'Email verifier'...
 
