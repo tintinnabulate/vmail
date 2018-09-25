@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+    "log"
 
     "github.com/tintinnabulate/gonfig"
 	"github.com/gorilla/mux"
@@ -144,7 +145,9 @@ func configInit(configName string) {
 		FileDecoder:         gonfig.DecoderJSON,
 		FlagDisable:         true,
 	})
-	checkErr(err)
+	if err != nil {
+        log.Fatalf("could not load configuration file: %v", err)
+    }
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
