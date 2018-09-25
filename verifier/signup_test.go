@@ -9,6 +9,7 @@ import (
 
 	c "github.com/smartystreets/goconvey/convey"
 	"github.com/tintinnabulate/aecontext-handlers/handlers"
+	"github.com/tintinnabulate/aecontext-handlers/testers"
 )
 
 func TestMain(m *testing.M) {
@@ -23,7 +24,7 @@ func testSetup() {
 
 // TestCreateSignupEndpoint tests that we can create a signup
 func TestCreateSignupEndpoint(t *testing.T) {
-	ctx, inst := handlers.GetTestingContext()
+	ctx, inst := testers.GetTestingContext()
 	defer inst.Close()
 
 	c.Convey("When you want to do foo", t, func() {
@@ -44,7 +45,7 @@ func TestCreateSignupEndpoint(t *testing.T) {
 
 // TestCreateAndVerifyAndCheckSignupEndpoint tests that we can create a signup, verify it, and then check that it is verified
 func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
-	ctx, inst := handlers.GetTestingContext()
+	ctx, inst := testers.GetTestingContext()
 	defer inst.Close()
 
 	c.Convey("When creating a signup for email address 'lolz'", t, func() {
@@ -97,7 +98,7 @@ func TestCreateAndVerifyAndCheckSignupEndpoint(t *testing.T) {
 
 // TestVerifySignupEndpoint tests that verifying a non-existent code produces a JSON response where "success": false .
 func TestVerifySignupEndpoint(t *testing.T) {
-	ctx, inst := handlers.GetTestingContext()
+	ctx, inst := testers.GetTestingContext()
 	defer inst.Close()
 
 	c.Convey("When you try and verify a non-existent code", t, func() {
