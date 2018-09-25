@@ -127,6 +127,7 @@ Best wishes,
 %s Committee.
 `
 
+// Config : the configuration file format
 type Config struct {
 	SMTPUsername string `id:"SMTPUsername" default:"sender@mydomain.com"`
 	SMTPPassword string `id:"SMTPPassword" default:"mypassword"`

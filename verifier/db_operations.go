@@ -28,6 +28,7 @@ type Signup struct {
 	id                int64     // The integer ID used in the datastore.
 }
 
+// Site : stores each site we verify emails for
 type Site struct {
 	CreationTimestamp time.Time `datastore:"created"`
 	SiteName          string    `datastore:"site_name"`
