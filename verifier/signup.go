@@ -10,12 +10,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-    "log"
 
-    "github.com/tintinnabulate/gonfig"
 	"github.com/gorilla/mux"
 	"github.com/tintinnabulate/aecontext-handlers/handlers"
+	"github.com/tintinnabulate/gonfig"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/mail"
 )
@@ -146,8 +146,8 @@ func configInit(configName string) {
 		FlagDisable:         true,
 	})
 	if err != nil {
-        log.Fatalf("could not load configuration file: %v", err)
-    }
+		log.Fatalf("could not load configuration file: %v", err)
+	}
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
