@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"net/http"
 
+    "github.com/tintinnabulate/gonfig"
 	"github.com/gorilla/mux"
-	"github.com/spf13/viper"
 	"github.com/tintinnabulate/aecontext-handlers/handlers"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine/mail"
@@ -109,6 +109,7 @@ func IsSignupVerifiedEndpoint(ctx context.Context, w http.ResponseWriter, req *h
 
 var (
 	appRouter mux.Router
+	config    Config
 )
 
 const verificationEmailBody = `
@@ -125,20 +126,34 @@ Best wishes,
 %s Committee.
 `
 
-// configInit : load in config file using spf13/viper
+type Config struct {
+	SMTPUsername string `id:"SMTPUsername" default:"sender@mydomain.com"`
+	SMTPPassword string `id:"SMTPPassword" default:"mypassword"`
+	SMTPServer   string `id:"SMTPServer"   default:"smtp.mydomain.com"`
+	SiteDomain   string `id:"SiteDomain"   default:"mydomain.com"`
+	SiteName     string `id:"SiteName"     default:"MyDomain"`
+	ProjectID    string `id:"ProjectID"    default:"my-appspot-project-id"`
+	ProjectURL   string `id:"ProjectURL"   default:"my-appspot-project-id.appspot.com"`
+	ProjectEmail string `id:"ProjectEmail" default:"donotreply@my-appspot-project-id.appspotmail.com"`
+}
+
+// configInit : load in config file using gonfig
 func configInit(configName string) {
-	viper.SetConfigName(configName)
-	viper.AddConfigPath(".")
-	viper.ReadInConfig()
+	err := gonfig.Load(&config, gonfig.Conf{
+		FileDefaultFilename: configName,
+		FileDecoder:         gonfig.DecoderJSON,
+		FlagDisable:         true,
+	})
+	checkErr(err)
 }
 
 // ComposeVerificationEmail builds the verification email, ready to be sent
 func ComposeVerificationEmail(site Site, address, code string) *mail.Message {
 	return &mail.Message{
-		Sender:  fmt.Sprintf("[DO NOT REPLY] %s Admin <%s>", site.SiteName, viper.GetString("ProjectEmail")),
+		Sender:  fmt.Sprintf("[DO NOT REPLY] %s Admin <%s>", site.SiteName, config.ProjectEmail),
 		To:      []string{address},
 		Subject: fmt.Sprintf("[%s Registration] Please confirm your email address", site.SiteName),
-		Body:    fmt.Sprintf(verificationEmailBody, site.SiteName, viper.GetString("ProjectURL"), site.Code, code, site.SiteName),
+		Body:    fmt.Sprintf(verificationEmailBody, site.SiteName, config.ProjectURL, site.Code, code, site.SiteName),
 	}
 }
 
@@ -150,6 +165,6 @@ func EmailVerificationCode(ctx context.Context, address, siteCode, code string) 
 }
 
 func init() {
-	configInit("config")
+	configInit("config.json")
 	http.Handle("/", CreateHandler(handlers.ToHTTPHandler))
 }

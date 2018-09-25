@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 }
 
 func testSetup() {
-	configInit("config.example")
+	configInit("config.example.json")
 }
 
 // TestCreateSignupEndpoint tests that we can create a signup
