@@ -1,6 +1,12 @@
 all:
+	# launch dev version of app on localhost
 	dev_appserver.py .
 test:
-	go test -v .
+	# verbose mode, get code coverage, check for race conditions, on all *_test.go files in this package
+	go test -v -cover -race ./...
 deploy:
-	goapp deploy -application seraphic-lock-199316 -version 0
+	# deploy to live site, creating a new instance (do this before overwrite!)
+	gcloud app deploy
+overwrite:
+	# deploy to live site overwriting version 0 (do this only after you've tested deploy!)
+	gcloud app deploy --version 0
