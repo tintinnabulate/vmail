@@ -79,9 +79,11 @@ func VerifyCodeEndpoint(ctx context.Context, w http.ResponseWriter, req *http.Re
 	if err != nil {
 		verification.Success = false
 		verification.Note = err.Error()
-		http.Redirect(w, req, site.RootURL, http.StatusSeeOther)
+		http.Redirect(w, req, site.RootURL, http.StatusNotFound)
+		return
 	} else {
 		http.Redirect(w, req, site.VerifiedURL, http.StatusFound)
+		return
 	}
 }
 

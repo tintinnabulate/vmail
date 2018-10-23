@@ -27,14 +27,14 @@ func TestCreateSignupEndpoint(t *testing.T) {
 	ctx, inst := testers.GetTestingContext()
 	defer inst.Close()
 
-	c.Convey("When you want to do foo", t, func() {
+	c.Convey("When you want to sign up", t, func() {
 		r := CreateHandler(handlers.ToHTTPHandlerConverter(ctx))
 		record := httptest.NewRecorder()
 
 		req, err := http.NewRequest("POST", "/signup/foo/lolz", nil)
 		c.So(err, c.ShouldBeNil)
 
-		c.Convey("It should return a 200 response", func() {
+		c.Convey("It should allow you to sign up", func() {
 			r.ServeHTTP(record, req)
 			c.So(record.Code, c.ShouldEqual, 200)
 			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `{"address":"lolz","success":true,"note":""}
@@ -111,12 +111,9 @@ func TestVerifySignupEndpoint(t *testing.T) {
 		_, errk := AddSite(ctx, "FOOWEBSITE", "foo", "http://barnacles.com")
 		CheckErr(errk)
 
-		c.Convey("It should return a 303 response, and fail", func() {
+		c.Convey("It should return StatusNotFound, and fail", func() {
 			r.ServeHTTP(record, req)
-			c.So(record.Code, c.ShouldEqual, 303)
-			c.So(fmt.Sprint(record.Body), c.ShouldEqual, `<a href="http://barnacles.com">See Other</a>.
-
-`)
+			c.So(record.Code, c.ShouldEqual, http.StatusNotFound)
 		})
 	})
 }
