@@ -23,6 +23,11 @@ func isSignupVerified(w http.ResponseWriter, r *http.Request) {
 	email.Success = mux.Vars(r)["email"] == testEmailAddress
 	email.Note = ""
 	w.Header().Set("Content-Type", "application/json")
+	if !email.Success {
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		w.WriteHeader(http.StatusFound)
+	}
 	_ = json.NewEncoder(w).Encode(email)
 }
 
