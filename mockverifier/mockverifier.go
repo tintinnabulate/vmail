@@ -26,7 +26,7 @@ func isSignupVerified(w http.ResponseWriter, r *http.Request) {
 	if !email.Success {
 		w.WriteHeader(http.StatusNotFound)
 	} else {
-		w.WriteHeader(http.StatusFound)
+		w.WriteHeader(http.StatusOK)
 	}
 	_ = json.NewEncoder(w).Encode(email)
 }
