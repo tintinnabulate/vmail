@@ -30,7 +30,7 @@ func isSignupVerified(w http.ResponseWriter, r *http.Request) {
 func Start(email string) {
 	testEmailAddress = email
 	appRouter := mux.NewRouter()
-	appRouter.HandleFunc("/signup/{site_code}/{email}", isSignupVerified).Methods("GET")
+	appRouter.HandleFunc("/signup/{site_code}/{email}", isSignupVerified).Methods("GET", "POST")
 
 	log.Fatal(http.ListenAndServe(":10000", appRouter))
 }
