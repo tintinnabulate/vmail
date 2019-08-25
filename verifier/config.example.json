@@ -4,7 +4,9 @@
     "SMTPServer": "smtp.mydomain.com",
     "SiteDomain": "mydomain.com",
     "SiteName": "MyDomain",
-    "ProjectID": "blahblah",
+    "ProjectID": "my-project-id",
     "ProjectURL": "blahblah.appspot.com",
-    "ProjectEmail": "donotreply@blahblah.appspot.com"
+    "ProjectEmail": "donotreply@blahblah.appspot.com",
+    "SendGridKey": "MySendgridAPIkey",
+    "GoogleCredentials": "mygoogleservicecredentials.json"
 }
