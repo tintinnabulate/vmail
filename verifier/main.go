@@ -129,6 +129,20 @@ Best wishes,
 %s Committee.
 `
 
+const verificationEmailBodyHTML = `
+<p>Welcome to %s!</p>
+
+<p>To get started, please click below to confirm your email address:</p>
+
+<p><a href="https://%s/verify/%s/%s">Verify email address</a></p>
+
+<p>This is an automated email. Do not reply to this email address.</p>
+
+<p>-- <br>
+Best wishes,<br>
+%s Committee.</p>
+`
+
 // Config : the configuration file format
 type Config struct {
 	SMTPUsername      string `id:"SMTPUsername"      default:"sender@mydomain.com"`
@@ -180,9 +194,10 @@ func ComposeVerificationEmail(site Site, address, code string) []byte {
 	m.AddPersonalizations(p)
 
 	plainTextContent := fmt.Sprintf(verificationEmailBody, site.SiteName, config.ProjectURL, site.Code, code, site.SiteName)
+	htmlTextContent := fmt.Sprintf(verificationEmailBodyHTML, site.SiteName, config.ProjectURL, site.Code, code, site.SiteName)
 	c := mail.NewContent("text/plain", plainTextContent)
 	m.AddContent(c)
-	c = mail.NewContent("text/html", plainTextContent)
+	c = mail.NewContent("text/html", htmlTextContent)
 	m.AddContent(c)
 
 	mailSettings := mail.NewMailSettings()
