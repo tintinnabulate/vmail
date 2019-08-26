@@ -9,12 +9,12 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
 
 	"cloud.google.com/go/datastore"
-	"golang.org/x/net/context"
 	"google.golang.org/api/iterator"
 )
 
